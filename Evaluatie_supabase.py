@@ -770,7 +770,8 @@ def dash_studenten():
     st.markdown("""
     <div class="dashboard-header">
         <h2 style="margin:0;font-family:'DM Serif Display',serif;">Dashboard - Studentenevaluatie</h2>
-        <p style="margin:0.4rem 0 0;opacity:0.85;">Academie voor Lichamelijke Opvoeding - resultaten van studenten</p>
+        <p style="margin:0.4rem 0 0;opacity:0.85;">Academie voor Lichamelijke Opvoeding - resultaten van studenten. <br>
+        Graag na het downloaden van de resultaten de resultaten verwijderen zodat de volgende gerbuiker hier betrouwbare informatie uithaald.</p>
     </div>""", unsafe_allow_html=True)
     resultaten = laad(TABEL_ST)
     if not resultaten:

@@ -599,7 +599,7 @@ def student_pagina():
     st.markdown("""
     <div class="main-header">
         <h1>Cursus evaluatie studenten</h1>
-        <p> Welkom bij de cursusevaluatie. Deze vragenlijst heeft als doel de cursus te verbeteren op basis van jouw ervaringen als student. 
+        <p> Welkom bij de cursusevaluatie. Deze vragenlijst heeft als doel de cursus te verbeteren op basis van jouw ervaringen als student. <br>
         Jouw feedback is waardevol en helpt ons om de kwaliteit van het onderwijs te verhogen voor toekomstige studenten.
         Beantwoord de vragen eerlijk - de evaluatie is volledig anoniem.<br>
         Vul niet het gewenste juiste antwoord in; dit leidt tot minder accurate resultaten.<br>

@@ -16,7 +16,7 @@ DOCENT_WACHTWOORD = "alo"           # ← wachtwoord voor docentendashboard
 
 # Studiehandleiding PDF
 # Zet het PDF-bestand in dezelfde map als dit script en pas de naam hieronder aan.
-STUDIEHANDLEIDING_PAD  = "SHL.pdf"      # ← bestandsnaam aanpassen
+STUDIEHANDLEIDING_PAD  = "SHL_VLB2.pdf"      # ← bestandsnaam aanpassen
 STUDIEHANDLEIDING_NAAM = "Studiehandleiding cursus verantwoord leren lesgeven"   # ← weergavenaam aanpassen
 
 # ═══════════════════════════════════════════════════════════════
@@ -71,7 +71,7 @@ VRAGEN_ST = {
         ("In hoeverre worden de lesdoelen aan het begin van elke les duidelijk gecommuniceerd?",          2),
         ("De lesstof wordt verbonden aan realistische situaties vanuit de stagepraktijk.",                 2),
         ("De lesstof wordt toegelicht waarom het relevant is in de praktijk?",                            3),
-        ("De lesstof wordt op een heldere en gestructureerde wijze aangeboden.",                                           3),
+        ("De lesstof wordt op een behapbare wijze aangeboden.",                                           3),
         ("De verplichtingen en verwachtingen van de cursus worden duidelijk gecommuniceerd.",             3),
         ("De visuele hulpmiddelen helpen met het begrip van de leerstof.",                                4),
     ],
@@ -599,8 +599,7 @@ def student_pagina():
     st.markdown("""
     <div class="main-header">
         <h1>Cursus evaluatie studenten</h1>
-        <p>Welkom bij de cursusevaluatie. Deze vragenlijst heeft als doel de cursus te verbeteren op basis van jouw ervaringen als student. <br>
-        Jouw feedback is waardevol en helpt ons om de kwaliteit van het onderwijs te verhogen voor toekomstige studenten. <br>
+        <p>Beantwoord de vragen eerlijk - de evaluatie is volledig anoniem.<br>
         Vul niet het gewenste juiste antwoord in; dit leidt tot minder accurate resultaten.<br>
         <em>Er wordt gebruik gemaakt van de Likert-schaal (voor hulp klik op de (?) naast de vraag).</em></p>
     </div>""", unsafe_allow_html=True)
@@ -630,14 +629,37 @@ def student_pagina():
             g = sum(sc)/len(sc); sg[o] = round(g,2); sn[o] = bereken_niveau(g)
         tg = sum(sg.values())/len(sg); tn = bereken_niveau(tg)
         sla_student_op(alle_scores, sg, sn, tn, open_antwoord_tekst)
-        st.success("Je antwoorden zijn opgeslagen!")
-        st.markdown("## Jouw mening over de cursus")
-        cols = st.columns(min(len(sg), 3))
-        for idx, (o, niv) in enumerate(sn.items()):
-            with cols[idx % 3]:
-                st.markdown(f'<div class="rubric-card" style="background:{niveau_kleur_css(niv)};"><h4>{o}</h4><div class="badge">{NIVEAU_LABELS[niv]}</div><div class="sub">Gemiddelde: {sg[o]:.2f}</div></div>', unsafe_allow_html=True)
-        kt = niveau_kleur_css(tn)
-        st.markdown(f'<div class="totaal-badge" style="background:linear-gradient(135deg,{kt}cc,{kt});"><div class="label">Totaal Niveau</div><div class="tekst">{NIVEAU_LABELS[tn]}</div><div style="margin-top:0.5rem;opacity:0.85;font-size:0.9rem;">{NIVEAU_BESCHRIJVING[tn]}</div></div>', unsafe_allow_html=True)
+        st.session_state["st_ingediend"] = True
+        st.session_state["st_resultaat"] = {
+            "niveaus": sn, "gemiddeldes": sg, "totaal_niveau": tn
+        }
+        st.rerun()
+
+
+# ═══════════════════════════════════════════════════════════════
+#  STUDENT - bedankt scherm
+# ═══════════════════════════════════════════════════════════════
+def st_bedankt():
+    res = st.session_state.get("st_resultaat", {})
+    niveaus = res.get("niveaus", {}); gemiddeldes = res.get("gemiddeldes", {})
+    tn = res.get("totaal_niveau", 3)
+
+    st.markdown("""
+    <div class="main-header">
+        <h1>Cursus evaluatie studenten</h1>
+        <p>Bedankt voor het invullen van de evaluatie!</p>
+    </div>""", unsafe_allow_html=True)
+
+    st.success("✅ Je antwoorden zijn succesvol ingestuurd. Hartelijk dank!")
+    st.markdown("## Jouw mening over de cursus")
+
+    cols = st.columns(min(len(niveaus), 3))
+    for idx, (o, niv) in enumerate(niveaus.items()):
+        with cols[idx % 3]:
+            st.markdown(f'<div class="rubric-card" style="background:{niveau_kleur_css(niv)};"><h4>{o}</h4><div class="badge">{NIVEAU_LABELS[niv]}</div><div class="sub">Gemiddelde: {gemiddeldes[o]:.2f}</div></div>', unsafe_allow_html=True)
+
+    kt = niveau_kleur_css(tn)
+    st.markdown(f'<div class="totaal-badge" style="background:linear-gradient(135deg,{kt}cc,{kt});"><div class="label">Totaal Niveau</div><div class="tekst">{NIVEAU_LABELS[tn]}</div><div style="margin-top:0.5rem;opacity:0.85;font-size:0.93rem;">{NIVEAU_BESCHRIJVING[tn]}</div></div>', unsafe_allow_html=True)
 
 # ═══════════════════════════════════════════════════════════════
 #  WERKVELD - email scherm
@@ -683,8 +705,7 @@ def wv_studiehandleiding_scherm():
             <p style="color:#0c4a6e;margin-bottom:1.2rem;">
                 Klik op de knop hieronder om de studiehandleiding te openen in een nieuw tabblad.
                 U kunt daarna terugkeren naar deze pagina om de evaluatie in te vullen. <br>
-                **LET OP je moet het geopende pdf bestand refreshen mocht u de informatie niet zien.** <br>
-                ** Het openen van het pdf bestand is alleen mogelijk op een laptop. **
+                **LET OP je moet het geopende pdf bestand refreshen mocht u de informatie niet zien.**
             </p>
             <a href="data:application/pdf;base64,{b64}" target="_blank"
                style="background:#0f3460;color:white;padding:0.6rem 1.4rem;border-radius:8px;
@@ -989,6 +1010,7 @@ def main():
         ("rol", None), ("docent_ingelogd", False),
         ("wv_email", None), ("wv_sh_gezien", False),
         ("wv_ingediend", False), ("wv_resultaat", {}),
+        ("st_ingediend", False), ("st_resultaat", {}),
     ]
     for k, v in defaults:
         if k not in st.session_state:
@@ -997,7 +1019,10 @@ def main():
     if rol is None:
         landingspagina()
     elif rol == "student":
-        student_pagina()
+        if st.session_state["st_ingediend"]:
+            st_bedankt()
+        else:
+            student_pagina()
     elif rol == "werkveld":
         if st.session_state["wv_ingediend"]:
             wv_bedankt()

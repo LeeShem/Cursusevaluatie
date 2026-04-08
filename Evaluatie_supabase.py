@@ -682,7 +682,8 @@ def wv_studiehandleiding_scherm():
             <p style="color:#0c4a6e;margin-bottom:1.2rem;">
                 Klik op de knop hieronder om de studiehandleiding te openen in een nieuw tabblad.
                 U kunt daarna terugkeren naar deze pagina om de evaluatie in te vullen. <br>
-                **LET OP je moet het geopende pdf bestand refreshen mocht u de informatie niet zien.**
+                **LET OP je moet het geopende pdf bestand refreshen mocht u de informatie niet zien.** <br>
+                ** Het openen van het pdf bestand is alleen mogelijk op een laptop. **
             </p>
             <a href="data:application/pdf;base64,{b64}" target="_blank"
                style="background:#0f3460;color:white;padding:0.6rem 1.4rem;border-radius:8px;

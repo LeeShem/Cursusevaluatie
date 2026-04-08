@@ -600,7 +600,7 @@ def student_pagina():
     <div class="main-header">
         <h1>Cursus evaluatie studenten</h1>
         <p> Welkom bij de cursusevaluatie. Deze vragenlijst heeft als doel de cursus te verbeteren op basis van jouw ervaringen als student. <br>
-        Jouw feedback is waardevol en helpt ons om de kwaliteit van het onderwijs te verhogen voor toekomstige studenten.
+        Jouw feedback is waardevol en helpt ons om de kwaliteit van het onderwijs te verhogen voor toekomstige studenten. <br>
         Beantwoord de vragen eerlijk - de evaluatie is volledig anoniem.<br>
         Vul niet het gewenste juiste antwoord in; dit leidt tot minder accurate resultaten.<br>
         <em>Er wordt gebruik gemaakt van de Likert-schaal (voor hulp klik op de (?) naast de vraag).</em></p>

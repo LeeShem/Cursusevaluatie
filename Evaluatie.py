@@ -16,7 +16,7 @@ DOCENT_WACHTWOORD = "alo"           # ← wachtwoord voor docentendashboard
 
 # Studiehandleiding PDF
 # Zet het PDF-bestand in dezelfde map als dit script en pas de naam hieronder aan.
-STUDIEHANDLEIDING_PAD  = "Studiehandleiding.pdf"      # ← bestandsnaam aanpassen
+STUDIEHANDLEIDING_PAD  = "SHL_VLB2.pdf"      # ← bestandsnaam aanpassen
 STUDIEHANDLEIDING_NAAM = "Studiehandleiding cursus verantwoord leren lesgeven"   # ← weergavenaam aanpassen
 
 # ═══════════════════════════════════════════════════════════════

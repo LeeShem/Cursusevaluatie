@@ -599,7 +599,8 @@ def student_pagina():
     st.markdown("""
     <div class="main-header">
         <h1>Cursus evaluatie studenten</h1>
-        <p>Beantwoord de vragen eerlijk - de evaluatie is volledig anoniem.<br>
+        <p>Welkom bij de cursusevaluatie. Deze vragenlijst heeft als doel de cursus te verbeteren op basis van jouw ervaringen als student. <br>
+        Jouw feedback is waardevol en helpt ons om de kwaliteit van het onderwijs te verhogen voor toekomstige studenten. <br>
         Vul niet het gewenste juiste antwoord in; dit leidt tot minder accurate resultaten.<br>
         <em>Er wordt gebruik gemaakt van de Likert-schaal (voor hulp klik op de (?) naast de vraag).</em></p>
     </div>""", unsafe_allow_html=True)

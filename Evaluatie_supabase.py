@@ -168,8 +168,8 @@ gelijkstaat aan een volle voldoende, maar wordt geinterpreteerd als een <strong>
 <ul>
     <li><strong>Zeer slecht:</strong> 1 - 2,5</li>
     <li><strong>Slecht:</strong> 2,5 - 5</li>
-    <li><strong>Neutraal:</strong> 5 - 6</li>
-    <li><strong>Goed:</strong> 7 - 8,5</li>
+    <li><strong>Neutraal:</strong> 5 - 6,5</li>
+    <li><strong>Goed:</strong> 6,5 - 8,5</li>
     <li><strong>Excellent:</strong> 8,5 - 10</li>
 </ul>
 <p>Deze indeling helpt om duidelijk onderscheid te maken tussen verschillende niveaus en

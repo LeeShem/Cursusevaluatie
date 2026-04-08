@@ -71,7 +71,7 @@ VRAGEN_ST = {
         ("In hoeverre worden de lesdoelen aan het begin van elke les duidelijk gecommuniceerd?",          2),
         ("De lesstof wordt verbonden aan realistische situaties vanuit de stagepraktijk.",                 2),
         ("De lesstof wordt toegelicht waarom het relevant is in de praktijk?",                            3),
-        ("De lesstof wordt op een behapbare wijze aangeboden.",                                           3),
+        ("De lesstof wordt op een heldere en gestructureerde wijze aangeboden.",                                           3),
         ("De verplichtingen en verwachtingen van de cursus worden duidelijk gecommuniceerd.",             3),
         ("De visuele hulpmiddelen helpen met het begrip van de leerstof.",                                4),
     ],

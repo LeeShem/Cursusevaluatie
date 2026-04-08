@@ -163,7 +163,8 @@ SCHAAL_INFO = """<div class="schaal-info">
 <h4>Info Beoordelingsschaal</h4>
 <p>Het is belangrijk om te beseffen dat de term <strong>neutraal</strong> in deze context niet
 gelijkstaat aan een volle voldoende, maar wordt geinterpreteerd als een <strong>gemiddelde prestatie
-(circa een 5 á 6)</strong>. Dit betekent dat een neutrale beoordeling nog als onvoldoende/ net aan voldoende wordt beschouwd.</p>
+(circa een 5 á 6)</strong>. Dit betekent dat een neutrale beoordeling nog als onvoldoende/ net aan voldoende wordt beschouwd.</p> <br>
+Er moeten dus nog wel stappen worden gemaakt binnen de cursus
 <p><strong>De beoordelingscategorieen zijn als volgt ingedeeld:</strong></p>
 <ul>
     <li><strong>Zeer slecht:</strong> 1 - 2,5</li>

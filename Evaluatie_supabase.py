@@ -1245,18 +1245,17 @@ def dash_docent_evaluatie():
     st.caption("Kleur geeft het gemiddelde aan over alle ingediende evaluaties. Groen = Goed | Geel = Neutraal | Rood = Slecht")
 
     # Bereken lens gemiddeldes voor docent
-    lens_scores_dc = {(o, l): [] for o in VRAGEN_DC.keys() for l in [1,2,3,4]}
-    for r in resultaten:
-        for o, stellingen in VRAGEN_DC.items():
-            sc = r.get("scores_per_stelling", {}).get(o, [])
-            for i, (_, lens, _) in enumerate(stellingen):
+    # Bereken per onderdeel, per theorie het gemiddelde op basis van ALLEEN die stelling
+    # theorie_gems_dc = { (onderdeel, theorie_label): gemiddelde_score }
+    theorie_gems_dc = {}
+    for o, stellingen in VRAGEN_DC.items():
+        for i, (stelling, lens, theorie) in enumerate(stellingen):
+            scores = []
+            for r in resultaten:
+                sc = r.get("scores_per_stelling", {}).get(o, [])
                 if i < len(sc):
-                    lens_scores_dc[(o, lens)].append(sc[i])
-    lens_gems_dc = {}
-    for o in VRAGEN_DC.keys():
-        for l in [1,2,3,4]:
-            sl = lens_scores_dc[(o, l)]
-            lens_gems_dc[(o, l)] = round(sum(sl)/len(sl), 2) if sl else None
+                    scores.append(sc[i])
+            theorie_gems_dc[(o, theorie)] = round(sum(scores)/len(scores), 2) if scores else None
 
     lh_dc = [
         "Lens 1: Niveau & Samenhang<br><small>(Biggs, Bloom, Dublin)</small>",
@@ -1264,6 +1263,15 @@ def dash_docent_evaluatie():
         "Lens 3: Transfer theorie-praktijk<br><small>(Kolb, Miller, Shulman PCK)</small>",
         "Lens 4: De student en leertools<br><small>(TPACK, Zimmerman)</small>",
     ]
+
+    # Welke theorieën horen bij welke lens (vaste mapping)
+    LENS_THEORIEEN = {
+        1: ["Biggs", "Bloom", "Dublin"],
+        2: ["Gagné", "Context-Concept", "Scaffolding", "Entwistle"],
+        3: ["Shulman PCK", "Kolb", "Miller"],
+        4: ["Zimmerman", "TPACK"],
+    }
+
     st.markdown("""<div style="display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:0.8rem;font-size:0.8rem;">
     <span style="background:#f8d7da;padding:3px 10px;border-radius:6px;">Rood = Slecht (&lt; 1.67)</span>
     <span style="background:#fff9c4;padding:3px 10px;border-radius:6px;">Geel = Neutraal (1.67 - 2.33)</span>
@@ -1278,14 +1286,49 @@ def dash_docent_evaluatie():
 
     for o in VRAGEN_DC.keys():
         tabel += "<tr>"
-        tabel += f'<td style="background:#eef2ff;font-weight:700;color:#0f3460;text-align:center;padding:10px;border:1px solid #ddd;">{o}</td>'
+        tabel += f'<td style="background:#eef2ff;font-weight:700;color:#0f3460;text-align:center;padding:10px;border:1px solid #ddd;vertical-align:top;">{o}</td>'
+
         for lens in [1,2,3,4]:
-            gem = lens_gems_dc.get((o, lens))
-            inh = RUBRIC_DC.get((o, lens), "– (geen koppeling)")
-            achter = dc_kleur(gem)
-            tekst = inh.replace("\n", "<br>")
-            gb = f'<div style="font-weight:700;font-size:0.78rem;color:{dc_kleur_tekst(gem)};margin-bottom:6px;">Gemiddelde: {gem:.2f}</div>' if gem is not None else ""
-            tabel += f'<td style="background:{achter};border:1px solid #ccc;padding:10px;font-size:0.78rem;vertical-align:top;line-height:1.55;">{gb}{tekst}</td>'
+            # Haal de theorieën op die in dit onderdeel + deze lens voorkomen
+            theorieen_in_cel = []
+            for stelling, sl, theorie in VRAGEN_DC[o]:
+                if sl == lens:
+                    theorieen_in_cel.append(theorie)
+            # Unieke volgorde behouden
+            gezien = set()
+            unieke_theorieen = []
+            for t in theorieen_in_cel:
+                if t not in gezien:
+                    gezien.add(t)
+                    unieke_theorieen.append(t)
+
+            if not unieke_theorieen:
+                tabel += '<td style="background:#e8ecf4;border:1px solid #ccc;padding:10px;font-size:0.78rem;vertical-align:top;color:#888;">– (geen koppeling)</td>'
+            else:
+                cel_inhoud = ""
+                for theorie in unieke_theorieen:
+                    gem = theorie_gems_dc.get((o, theorie))
+                    achter = dc_kleur(gem)
+                    tekst_kleur = dc_kleur_tekst(gem) if gem is not None else "#555"
+                    gem_str = f"{gem:.2f}" if gem is not None else "–"
+                    label_str = ("Goed" if gem >= 2.34 else ("Neutraal" if gem >= 1.67 else "Slecht")) if gem is not None else "Geen data"
+
+                    # Haal de bijbehorende stelling tekst op
+                    stelling_tekst = ""
+                    for st_tekst, st_lens, st_theorie in VRAGEN_DC[o]:
+                        if st_lens == lens and st_theorie == theorie:
+                            stelling_tekst = st_tekst
+                            break
+
+                    cel_inhoud += f"""<div style="background:{achter};border-radius:6px;padding:7px 9px;margin-bottom:6px;">
+                        <div style="font-weight:700;font-size:0.78rem;color:{tekst_kleur};margin-bottom:3px;">
+                            {theorie} — {label_str} ({gem_str})
+                        </div>
+                        <div style="font-size:0.75rem;color:#333;line-height:1.4;">{stelling_tekst}</div>
+                    </div>"""
+
+                tabel += f'<td style="background:white;border:1px solid #ccc;padding:8px;vertical-align:top;">{cel_inhoud}</td>'
+
         tabel += "</tr>"
     tabel += "</tbody></table>"
     st.markdown(tabel, unsafe_allow_html=True)

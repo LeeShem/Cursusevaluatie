@@ -26,6 +26,7 @@ STUDIEHANDLEIDING_NAAM = "Studiehandleiding cursus verantwoord leren lesgeven"  
 # ═══════════════════════════════════════════════════════════════
 TABEL_ST = "studenten_resultaten"   # naam tabel studenten in Supabase
 TABEL_WV = "werkveld_resultaten"    # naam tabel werkveld in Supabase
+TABEL_DC = "docent_resultaten"      # naam tabel docent eigen evaluatie in Supabase
 
 @st.cache_resource
 def verbind_supabase():
@@ -142,6 +143,125 @@ VRAGEN_WV = {
     ],
 }
 
+
+# ═══════════════════════════════════════════════════════════════
+#  VRAGEN DOCENT EIGEN EVALUATIE
+#  Elke stelling: (tekst, lens_nr, theorie_label)
+# ═══════════════════════════════════════════════════════════════
+VRAGEN_DC = {
+    "1 - Instructie": [
+        ("De behandelde theorie tijdens de instructie is direct te herleiden naar de formele leerdoelen en/of de eindtoets (geen irrelevante informatie).", 1, "Biggs"),
+        ("De docent stelt tijdens de instructie minimaal één gerichte denkvraag (geen reproductie) aan de groep.", 1, "Bloom"),
+        ("De les start expliciet met het benoemen van het leerdoel en het activeren van voorkennis.", 2, "Gagné"),
+        ("De theorie-uitleg begint met een herkenbaar praktijkprobleem uit de gymzaal (i.p.v. droge definities).", 2, "Context-Concept"),
+        ("Complexe theorie wordt op de slides in visueel toegankelijke stappen (chunks) aangeboden.", 2, "Scaffolding"),
+        ("De docent benoemt expliciet de relevantie van de theorie voor de latere rol als LO-docent.", 3, "Shulman PCK"),
+        ("De docent benoemt tijdens de uitleg expliciet het onderscheid tussen de hoofdzaken (de kern) en de bijzaken.", 4, "Zimmerman"),
+        ("De inzet van media is doelbewust: het ondersteunt de theorie óf dient als bewuste brain break, maar leidt niet af tijdens complexe uitleg.", 4, "TPACK"),
+    ],
+    "2 - Verwerking": [
+        ("De opdracht vereist expliciet het gebruik van academische hbo-vaardigheden (zoals bronnen wegen, professioneel argumenteren of kritisch analyseren).", 1, "Dublin"),
+        ("Het zwaartepunt van de opdracht ligt aantoonbaar op Toepassen of Evalueren (de student moet iets doen met de kennis, niet slechts reproduceren).", 1, "Bloom"),
+        ("De werkvorm dwingt studenten om zelf verbanden te zoeken en betekenis te geven aan de stof (Deep Learning), in plaats van passief invulwerk te doen.", 2, "Entwistle"),
+        ("De studenten werken actief en interactief (bijv. via discussie of ontwerp) aan een betekenisvol praktijkprobleem.", 2, "Context-Concept"),
+        ("Tijdens het werkcollege neemt de expliciete sturing van de docent merkbaar af, waardoor de autonomie van de student toeneemt.", 2, "Scaffolding"),
+        ("De opdracht dwingt de student om de theorie daadwerkelijk uit te voeren of te simuleren (Shows How), in plaats van er alleen over te praten (Knows).", 3, "Miller"),
+        ("De theorie wordt door de student actief gekoppeld aan een compleet nieuwe situatie of casus, waarmee transfer wordt geoefend.", 3, "Kolb"),
+        ("De opdracht of de docent biedt de student bewust ruimte voor eigen inbreng, keuzes of een eigen leerweg (autonomie).", 4, "Zimmerman"),
+        ("Er is een duidelijk moment in de les ingericht voor de ontwikkeling van zelfregulatie (zoals het geven van peer-feedback of reflectie op het eigen proces).", 4, "Zimmerman"),
+    ],
+    "3 - Zelfstudie & Literatuur": [
+        ("De teksten sluiten qua taal- en denkniveau aan bij de HBO ALO-student (geen versimpelde taal, maar ook geen onnodig complexe universitaire papers).", 1, "Dublin"),
+        ("De totale hoeveelheid te bestuderen stof is realistisch gecalculeerd in verhouding tot de formele studiebelastingsuren (SBU's).", 1, "Biggs"),
+        ("De literatuur wordt niet zomaar opgegeven, maar is voorzien van een heldere leesinstructie, focuspunten of specifieke leesvragen.", 2, "Scaffolding"),
+        ("In de opdracht tot zelfstudie zit een trigger die de student dwingt om eerst zijn/haar voorkennis op te halen voordat het lezen begint.", 2, "Gagné"),
+        ("Er staat expliciet beschreven waarom deze specifieke literatuur relevant is, om zo de diepe motivatie te stimuleren in plaats van vinkjesgedrag.", 2, "Entwistle"),
+        ("De literatuur is geschreven voor (of direct en logisch te vertalen naar) de ALO-context, en is geen algemene psychologie of theorie zonder link naar de gymzaal.", 3, "Shulman PCK"),
+        ("De leesopdracht vraagt de student expliciet om tijdens het lezen de theorie (concepten) te koppelen aan een eigen (stage)ervaring.", 3, "Kolb"),
+        ("Het materiaal is in een bruikbaar digitaal formaat beschikbaar gesteld, zodat de student de tekst kan doorzoeken en digitaal kan markeren.", 4, "TPACK"),
+        ("Er is een helder overzicht (planning) beschikbaar waaruit de student exact kan opmaken wanneer welke stof bestudeerd én toegepast moet zijn.", 4, "Zimmerman"),
+    ],
+    "4 - Digitale Tools & Oefenmateriaal": [
+        ("De oefenvragen in de tool komen qua format en denkniveau aantoonbaar overeen met de vragen op het uiteindelijke tentamen (alignment).", 1, "Biggs"),
+        ("De tool toetst niet uitsluitend op feitenkennis (wat), maar vraagt actief naar inzicht en het leggen van verbanden (waarom/hoe).", 1, "Bloom"),
+        ("De digitale tool biedt de mogelijkheid tot differentiatie (bijv. snellere studenten krijgen automatisch moeilijkere of verdiepende vragen).", 2, "Entwistle"),
+        ("De tool is logisch en zichtbaar ingebed in de leerroute van de student (als leermiddel), en staat niet als een losstaande, geïsoleerde gimmick in de cursus.", 2, "Gagné"),
+        ("De tool wordt gebruikt om een realistische praktijkhandeling te simuleren (Shows how), waarmee de student de brug naar de praktijk kan oefenen.", 3, "Miller"),
+        ("De tool schetst realistische praktijksituaties (ervaring) waarmee de student veilig en actief kan experimenteren zonder direct in de gymzaal te hoeven staan.", 3, "Kolb"),
+        ("Bij een foutief antwoord of actie geeft de tool direct specifieke, inhoudelijke feedback (feed forward), in plaats van uitsluitend de melding goed/fout.", 4, "Zimmerman"),
+        ("De ingezette digitale tool biedt een duidelijke didactische meerwaarde die zonder deze specifieke technologie niet (of zeer moeizaam) gerealiseerd had kunnen worden.", 4, "TPACK"),
+    ],
+    "5 - Beroepspraktijk": [
+        ("De weging van de stage-opdracht is expliciet vastgelegd en telt (formatief of summatief) zichtbaar mee voor de afronding van de cursus.", 1, "Biggs"),
+        ("De opdracht eist dat de student zelf een les(deel) ontwerpt of analytisch onderbouwt (waarom doe ik dit?), in plaats van uitsluitend een bestaand plan uit te voeren.", 1, "Bloom"),
+        ("De stage-instructie bevat concrete focuspunten, kaders of een kijkwijzer, zodat het voor de student helder is op welke hoofdzaken gelet moet worden.", 2, "Scaffolding"),
+        ("De opbouw van de opdracht dwingt de student om eerst in de gymzaal te handelen/observeren (context) voordat dit theoretisch verklaard wordt (concept).", 2, "Context-Concept"),
+        ("De opdracht borgt in de stappen dat de volledige leercyclus wordt doorlopen: ervaring opdoen, reflecteren, theorie koppelen, en een nieuw plan maken.", 3, "Kolb"),
+        ("Er is een verplicht, aantoonbaar moment (bijv. een handtekening of verslagje) waarop de student de theorie bespreekt met de werkplekbegeleider.", 3, "Kolb"),
+        ("De instructie verplicht de student om voorafgaand aan de praktijkuitvoering expliciet eigen, persoonlijke leerdoelen te formuleren.", 4, "Zimmerman"),
+        ("Het stage-portfolio of de opdracht bevat een verplicht onderdeel voor zowel tussentijdse als afrondende reflectie op het eigen leerproces.", 4, "Zimmerman"),
+    ],
+    "6 - Toetsing & Evaluatie": [
+        ("De inhoud, vraagstelling en moeilijkheidsgraad van de formatieve oefentoets(en) komen aantoonbaar overeen met het summatieve eindtentamen.", 1, "Biggs"),
+        ("De toetsmatrijs toont een bewuste, afgewogen balans tussen reproductievragen (kennis stampen) en hogere-orde vragen (toepassen, analyseren).", 1, "Bloom"),
+        ("De toetsvragen (ook schriftelijk) maken structureel gebruik van uitgewerkte praktijkcasussen, in plaats van enkel te vragen naar droge theoretische definities.", 2, "Context-Concept"),
+        ("Het scoringsmodel of de rubric beloont expliciet het aantonen van diepgaand begrip en het leggen van eigen verbanden (Deep Learning), en niet slechts exact reproductiewerk.", 2, "Entwistle"),
+        ("De gekozen toetsvorm is valide voor het leerdoel: handelingscompetenties (zoals lesgeven) worden getoetst via een praktijkassessment (Shows how), niet via een kennistoets.", 3, "Miller"),
+        ("Het probleem of de casus die in de toets centraal staat, is een authentieke, waarheidsgetrouwe weergave van een probleem uit de actuele ALO-beroepspraktijk.", 3, "Miller"),
+        ("Bij formatieve evaluaties krijgt de student naast een oordeel ook concrete feed forward (handelingsperspectief), zodat duidelijk is wat er moet gebeuren om beter te worden.", 4, "Zimmerman"),
+    ],
+}
+
+# Rubric inhoud per (onderdeel_key, lens) voor de docent evaluatie
+RUBRIC_DC = {
+    ("1 - Instructie", 1): "Biggs: De behandelde theorie is direct te herleiden naar de leerdoelen.\n\nBloom: De docent stelt minimaal één gerichte denkvraag aan de groep.",
+    ("1 - Instructie", 2): "Gagné: De les start met benoemen leerdoel en activeren voorkennis.\n\nContext-Concept: Uitleg begint met herkenbaar praktijkprobleem.\n\nScaffolding: Complexe theorie in toegankelijke stappen aangeboden.",
+    ("1 - Instructie", 3): "Shulman PCK: De docent benoemt expliciet de relevantie voor de rol als LO-docent.",
+    ("1 - Instructie", 4): "Zimmerman: Onderscheid hoofdzaken en bijzaken wordt benoemd.\n\nTPACK: Media-inzet is doelbewust en leidt niet af.",
+    ("2 - Verwerking", 1): "Dublin: Opdracht vereist gebruik van academische hbo-vaardigheden.\n\nBloom: Zwaartepunt ligt op Toepassen of Evalueren.",
+    ("2 - Verwerking", 2): "Entwistle: Werkvorm dwingt studenten verbanden te zoeken (Deep Learning).\n\nContext-Concept: Actief en interactief werken aan praktijkprobleem.\n\nScaffolding: Sturing docent neemt af, autonomie student neemt toe.",
+    ("2 - Verwerking", 3): "Miller: Opdracht dwingt theorie uit te voeren of simuleren (Shows How).\n\nKolb: Theorie actief koppelen aan nieuwe situatie (transfer).",
+    ("2 - Verwerking", 4): "Zimmerman: Ruimte voor eigen inbreng en autonomie.\n\nZimmerman: Moment ingericht voor zelfregulatie (peer-feedback of reflectie).",
+    ("3 - Zelfstudie & Literatuur", 1): "Dublin: Teksten sluiten aan bij HBO ALO-denkniveau.\n\nBiggs: Hoeveelheid stof realistisch in verhouding tot SBU's.",
+    ("3 - Zelfstudie & Literatuur", 2): "Scaffolding: Literatuur voorzien van leesinstructie of focuspunten.\n\nGagné: Trigger om voorkennis op te halen voor het lezen.\n\nEntwistle: Beschrijving waarom literatuur relevant is.",
+    ("3 - Zelfstudie & Literatuur", 3): "Shulman PCK: Literatuur direct vertaalbaar naar ALO-context.\n\nKolb: Student koppelt theorie aan eigen (stage)ervaring.",
+    ("3 - Zelfstudie & Literatuur", 4): "TPACK: Materiaal in bruikbaar digitaal formaat beschikbaar.\n\nZimmerman: Helder overzicht wanneer welke stof bestudeerd moet zijn.",
+    ("4 - Digitale Tools & Oefenmateriaal", 1): "Biggs: Oefenvragen komen overeen met tentamen (alignment).\n\nBloom: Tool vraagt actief naar inzicht, niet alleen feitenkennis.",
+    ("4 - Digitale Tools & Oefenmateriaal", 2): "Entwistle: Tool biedt mogelijkheid tot differentiatie.\n\nGagné: Tool is logisch ingebed in de leerroute.",
+    ("4 - Digitale Tools & Oefenmateriaal", 3): "Miller: Tool simuleert realistische praktijkhandeling (Shows how).\n\nKolb: Tool schetst realistische praktijksituaties voor experimenteren.",
+    ("4 - Digitale Tools & Oefenmateriaal", 4): "Zimmerman: Tool geeft specifieke feed forward bij foutief antwoord.\n\nTPACK: Tool biedt duidelijke didactische meerwaarde.",
+    ("5 - Beroepspraktijk", 1): "Biggs: Weging stage-opdracht expliciet vastgelegd.\n\nBloom: Student ontwerpt zelf een les of onderbouwt analytisch.",
+    ("5 - Beroepspraktijk", 2): "Scaffolding: Instructie bevat concrete focuspunten en kijkwijzer.\n\nContext-Concept: Eerst handelen/observeren, dan theoretisch verklaren.",
+    ("5 - Beroepspraktijk", 3): "Kolb: Volledige leercyclus wordt doorlopen.\n\nKolb: Verplicht moment waarop student theorie bespreekt met begeleider.",
+    ("5 - Beroepspraktijk", 4): "Zimmerman: Student formuleert vooraf persoonlijke leerdoelen.\n\nZimmerman: Portfolio bevat tussentijdse en afrondende reflectie.",
+    ("6 - Toetsing & Evaluatie", 1): "Biggs: Formatieve oefentoets komt overeen met summatief eindtentamen.\n\nBloom: Toetsmatrijs toont balans reproductie en hogere-orde vragen.",
+    ("6 - Toetsing & Evaluatie", 2): "Context-Concept: Toetsvragen maken gebruik van praktijkcasussen.\n\nEntwistle: Scoringsmodel beloont diepgaand begrip (Deep Learning).",
+    ("6 - Toetsing & Evaluatie", 3): "Miller: Toetsvorm valide voor leerdoel (Shows how bij handelingscompetenties).\n\nMiller: Casus is authentieke weergave van ALO-beroepspraktijk.",
+    ("6 - Toetsing & Evaluatie", 4): "Zimmerman: Student krijgt naast oordeel ook concrete feed forward.",
+}
+
+SCORE_LABELS_DC = {1: "Slecht", 2: "Neutraal", 3: "Goed"}
+SCORE_KLEUREN_DC = {1: "#e74c3c", 2: "#f1c40f", 3: "#2ecc71"}
+
+def dc_kleur(gem):
+    """Kleur op basis van gemiddelde score 1-3."""
+    if gem is None: return "#e8ecf4"
+    if gem < 1.67: return "#f8d7da"   # rood
+    elif gem < 2.34: return "#fff9c4"  # geel
+    else: return "#d4edda"             # groen
+
+def dc_kleur_hex(gem):
+    if gem is None: return "E8ECF4"
+    if gem < 1.67: return "F8D7DA"
+    elif gem < 2.34: return "FFF9C4"
+    else: return "D4EDDA"
+
+def dc_kleur_tekst(gem):
+    if gem is None: return "#888"
+    if gem < 1.67: return "#721c24"
+    elif gem < 2.34: return "#533f03"
+    else: return "#155724"
+
 # ═══════════════════════════════════════════════════════════════
 #  GEDEELDE CONSTANTEN
 # ═══════════════════════════════════════════════════════════════
@@ -162,14 +282,14 @@ NIVEAU_BESCHRIJVING = {
 SCHAAL_INFO = """<div class="schaal-info">
 <h4>Info Beoordelingsschaal</h4>
 <p>Het is belangrijk om te beseffen dat de term <strong>neutraal</strong> in deze context niet
-gelijkstaat aan een volle voldoende, maar wordt geinterpreteerd als een <strong>gemiddelde prestatie
-(circa een 5 á 6)</strong>. Dit betekent dat een neutrale beoordeling nog als onvoldoende/ net aan voldoende wordt beschouwd.</p>
+gelijkstaat aan een voldoende, maar wordt geinterpreteerd als een <strong>gemiddelde prestatie
+(circa een 5)</strong>. Dit betekent dat een neutrale beoordeling nog als onvoldoende wordt beschouwd.</p>
 <p><strong>De beoordelingscategorieen zijn als volgt ingedeeld:</strong></p>
 <ul>
     <li><strong>Zeer slecht:</strong> 1 - 2,5</li>
     <li><strong>Slecht:</strong> 2,5 - 5</li>
-    <li><strong>Neutraal:</strong> 5 - 6,5</li>
-    <li><strong>Goed:</strong> 6,5 - 8,5</li>
+    <li><strong>Neutraal:</strong> 5 (onvoldoende)</li>
+    <li><strong>Goed:</strong> 7 - 8,5</li>
     <li><strong>Excellent:</strong> 8,5 - 10</li>
 </ul>
 <p>Deze indeling helpt om duidelijk onderscheid te maken tussen verschillende niveaus en
@@ -239,6 +359,15 @@ def sla_werkveld_op(email, scores, spv, niveaus, tn, fg):
         "niveaus": niveaus,
         "totaal_niveau": tn,
         "focusgroep": fg,
+    })
+
+def sla_docent_op(scores_per_stelling, sectie_gemiddeldes, sectie_niveaus, totaal_gem):
+    schrijf_rij(TABEL_DC, {
+        "tijdstip": datetime.now().strftime("%Y-%m-%d %H:%M"),
+        "scores_per_stelling": scores_per_stelling,
+        "sectie_gemiddeldes": sectie_gemiddeldes,
+        "sectie_niveaus": sectie_niveaus,
+        "totaal_gemiddelde": totaal_gem,
     })
 
 def bereken_lens_gemiddeldes(resultaten):
@@ -599,9 +728,7 @@ def student_pagina():
     st.markdown("""
     <div class="main-header">
         <h1>Cursus evaluatie studenten</h1>
-        <p> Welkom bij de cursusevaluatie. Deze vragenlijst heeft als doel de cursus te verbeteren op basis van jouw ervaringen als student. <br>
-        Jouw feedback is waardevol en helpt ons om de kwaliteit van het onderwijs te verhogen voor toekomstige studenten. <br>
-        Beantwoord de vragen eerlijk - de evaluatie is volledig anoniem.<br>
+        <p>Beantwoord de vragen eerlijk - de evaluatie is volledig anoniem.<br>
         Vul niet het gewenste juiste antwoord in; dit leidt tot minder accurate resultaten.<br>
         <em>Er wordt gebruik gemaakt van de Likert-schaal (voor hulp klik op de (?) naast de vraag).</em></p>
     </div>""", unsafe_allow_html=True)
@@ -976,6 +1103,272 @@ def dash_werkveld():
 # ═══════════════════════════════════════════════════════════════
 #  DOCENT OMGEVING
 # ═══════════════════════════════════════════════════════════════
+
+# ═══════════════════════════════════════════════════════════════
+#  DOCENT - eigen cursus evaluatie vragenlijst
+# ═══════════════════════════════════════════════════════════════
+def docent_evaluatie_pagina():
+    st.markdown("""
+    <div class="main-header">
+        <h1>Docent Cursus Zelfevaluatie</h1>
+        <p>Beoordeel de kwaliteit van uw eigen cursus aan de hand van onderstaande stellingen.<br>
+        Elke stelling is gekoppeld aan een theoretisch kader uit de rubric.<br>
+        <em>Kies per stelling: Slecht (1), Neutraal (2) of Goed (3).</em></p>
+    </div>""", unsafe_allow_html=True)
+    st.divider()
+
+    alle_scores = {}
+    for onderdeel, stellingen in VRAGEN_DC.items():
+        st.markdown(f'<div class="sectie-card"><h3>📌 {onderdeel}</h3></div>', unsafe_allow_html=True)
+        sc = []
+        for i, (stelling, lens, theorie) in enumerate(stellingen, 1):
+            col1, col2 = st.columns([3, 1])
+            with col1:
+                st.markdown(f"**{i}.** {stelling}")
+                st.caption(f"Lens {lens} – {theorie}")
+            with col2:
+                score = st.select_slider(
+                    f"Beoordeling",
+                    options=[1, 2, 3],
+                    value=2,
+                    format_func=lambda x: SCORE_LABELS_DC[x],
+                    key=f"dc_{onderdeel}_{i}",
+                    label_visibility="collapsed"
+                )
+            sc.append(score)
+            st.markdown("---")
+        alle_scores[onderdeel] = sc
+
+    c1, c2, c3 = st.columns([1, 2, 1])
+    with c2:
+        if st.button("Stuur mijn zelfevaluatie in", use_container_width=True):
+            sg, sn = {}, {}
+            for o, sc in alle_scores.items():
+                g = round(sum(sc)/len(sc), 2)
+                sg[o] = g
+                sn[o] = "Goed" if g >= 2.34 else ("Neutraal" if g >= 1.67 else "Slecht")
+            tg = round(sum(sg.values())/len(sg), 2)
+            sla_docent_op(alle_scores, sg, sn, tg)
+            st.session_state["dc_ingediend"] = True
+            st.session_state["dc_resultaat"] = {"sectie_gemiddeldes": sg, "sectie_niveaus": sn, "totaal_gemiddelde": tg}
+            st.rerun()
+
+
+# ═══════════════════════════════════════════════════════════════
+#  DOCENT - bedankt scherm na zelfevaluatie
+# ═══════════════════════════════════════════════════════════════
+def docent_evaluatie_bedankt():
+    res = st.session_state.get("dc_resultaat", {})
+    sg = res.get("sectie_gemiddeldes", {})
+    sn = res.get("sectie_niveaus", {})
+    tg = res.get("totaal_gemiddelde", 2)
+
+    st.success("Uw zelfevaluatie is succesvol opgeslagen!")
+    st.markdown("## Uw beoordeling per onderdeel")
+
+    cols = st.columns(3)
+    for idx, (o, gem) in enumerate(sg.items()):
+        kleur = dc_kleur(gem)
+        label = sn.get(o, "")
+        with cols[idx % 3]:
+            st.markdown(f'<div class="rubric-card" style="background:{kleur};color:#1a1a2e;"><h4>{o}</h4><div class="badge">{label}</div><div class="sub">Gemiddelde: {gem:.2f}</div></div>', unsafe_allow_html=True)
+
+    kleur_tot = dc_kleur(tg)
+    label_tot = "Goed" if tg >= 2.34 else ("Neutraal" if tg >= 1.67 else "Slecht")
+    st.markdown(f'<div class="totaal-badge" style="background:linear-gradient(135deg,{kleur_tot}cc,{kleur_tot});color:#1a1a2e;"><div class="label">Totaal Gemiddelde</div><div class="tekst">{label_tot}</div><div style="margin-top:0.5rem;opacity:0.85;font-size:0.9rem;">Gemiddelde over alle stellingen: {tg:.2f}</div></div>', unsafe_allow_html=True)
+
+    st.markdown("&nbsp;")
+    if st.button("Terug naar dashboard"):
+        st.session_state["dc_ingediend"] = False
+        st.session_state["dc_resultaat"] = {}
+        st.session_state["docent_keuze"] = "Resultaten inzien"
+        st.rerun()
+
+
+# ═══════════════════════════════════════════════════════════════
+#  DOCENT - dashboard zelfevaluatie resultaten
+# ═══════════════════════════════════════════════════════════════
+def dash_docent_evaluatie():
+    st.markdown("""
+    <div class="dashboard-header">
+        <h2 style="margin:0;font-family:'DM Serif Display',serif;">Dashboard - Docent Zelfevaluatie</h2>
+        <p style="margin:0.4rem 0 0;opacity:0.85;">Overzicht van alle ingediende docent zelfevaluaties</p>
+    </div>""", unsafe_allow_html=True)
+
+    resultaten = laad(TABEL_DC)
+    if not resultaten:
+        st.warning("Er zijn nog geen docent zelfevaluaties ingestuurd.")
+        return
+
+    aantal = len(resultaten)
+    st.markdown(f"""
+    <div style="background:#eef2ff;border:1px solid #c7d2fe;border-radius:12px;
+                padding:1.2rem 1.8rem;margin-bottom:1.5rem;display:flex;align-items:center;gap:1.2rem;">
+        <div style="font-size:2.8rem;font-family:'DM Serif Display',serif;color:#0f3460;line-height:1;">{aantal}</div>
+        <div><div style="font-weight:600;color:#0f3460;font-size:1rem;">{"evaluatie ingediend" if aantal==1 else "evaluaties ingediend"}</div>
+        <div style="color:#666;font-size:0.85rem;">Docent zelfevaluaties</div></div>
+    </div>""", unsafe_allow_html=True)
+
+    # Gemiddelden per onderdeel
+    st.subheader("Gemiddelde scores per onderdeel")
+    for onderdeel in VRAGEN_DC.keys():
+        gems = [r["sectie_gemiddeldes"].get(onderdeel, 0) for r in resultaten]
+        gem = round(sum(gems)/len(gems), 2) if gems else 0
+        kleur = dc_kleur(gem)
+        label = "Goed" if gem >= 2.34 else ("Neutraal" if gem >= 1.67 else "Slecht")
+        st.markdown(f'<div style="background:{kleur};border-radius:8px;padding:0.7rem 1rem;margin-bottom:0.5rem;"><strong>{onderdeel}:</strong> {label} (gemiddelde: {gem:.2f})</div>', unsafe_allow_html=True)
+
+    st.markdown("---")
+
+    # Gemiddelden per stelling
+    st.subheader("Gemiddelde scores per stelling")
+    for onderdeel, stellingen in VRAGEN_DC.items():
+        with st.expander(f"📌 {onderdeel}", expanded=False):
+            gl = [r["sectie_gemiddeldes"].get(onderdeel, 0) for r in resultaten]
+            gs = round(sum(gl)/len(gl), 2) if gl else 0
+            kleur_s = dc_kleur(gs)
+            st.markdown(f'<div style="background:{kleur_s};border-radius:8px;padding:0.7rem 1rem;margin-bottom:1rem;"><strong>Onderdeel gemiddelde: {gs:.2f}</strong></div>', unsafe_allow_html=True)
+            rows = []
+            for vi, (stelling, lens, theorie) in enumerate(stellingen, 1):
+                av = [r.get("scores_per_stelling", {}).get(onderdeel, [])[vi-1]
+                      for r in resultaten
+                      if vi-1 < len(r.get("scores_per_stelling", {}).get(onderdeel, []))]
+                gv = round(sum(av)/len(av), 2) if av else "-"
+                label_v = "-" if gv == "-" else ("Goed" if gv >= 2.34 else ("Neutraal" if gv >= 1.67 else "Slecht"))
+                rows.append({"Nr.": vi, "Stelling": stelling, "Lens": lens, "Theorie": theorie, "Gemiddelde": gv, "Oordeel": label_v})
+            st.dataframe(pd.DataFrame(rows), use_container_width=True, hide_index=True)
+
+    st.markdown("---")
+
+    # Rubric
+    st.subheader("Rubric - Analysemodel Docent Zelfevaluatie")
+    st.caption("Kleur geeft het gemiddelde aan over alle ingediende evaluaties. Groen = Goed | Geel = Neutraal | Rood = Slecht")
+
+    # Bereken lens gemiddeldes voor docent
+    lens_scores_dc = {(o, l): [] for o in VRAGEN_DC.keys() for l in [1,2,3,4]}
+    for r in resultaten:
+        for o, stellingen in VRAGEN_DC.items():
+            sc = r.get("scores_per_stelling", {}).get(o, [])
+            for i, (_, lens, _) in enumerate(stellingen):
+                if i < len(sc):
+                    lens_scores_dc[(o, lens)].append(sc[i])
+    lens_gems_dc = {}
+    for o in VRAGEN_DC.keys():
+        for l in [1,2,3,4]:
+            sl = lens_scores_dc[(o, l)]
+            lens_gems_dc[(o, l)] = round(sum(sl)/len(sl), 2) if sl else None
+
+    lh_dc = [
+        "Lens 1: Niveau & Samenhang<br><small>(Biggs, Bloom, Dublin)</small>",
+        "Lens 2: Didactisch ontwerp<br><small>(Context-Concept, Entwistle, Gagné, Scaffolding)</small>",
+        "Lens 3: Transfer theorie-praktijk<br><small>(Kolb, Miller, Shulman PCK)</small>",
+        "Lens 4: De student en leertools<br><small>(TPACK, Zimmerman)</small>",
+    ]
+    st.markdown("""<div style="display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:0.8rem;font-size:0.8rem;">
+    <span style="background:#f8d7da;padding:3px 10px;border-radius:6px;">Rood = Slecht (&lt; 1.67)</span>
+    <span style="background:#fff9c4;padding:3px 10px;border-radius:6px;">Geel = Neutraal (1.67 - 2.33)</span>
+    <span style="background:#d4edda;padding:3px 10px;border-radius:6px;">Groen = Goed (&gt; 2.33)</span>
+    <span style="background:#e8ecf4;padding:3px 10px;border-radius:6px;">Grijs = Geen data</span></div>""", unsafe_allow_html=True)
+
+    tabel = '<table class="rubric-tabel" style="width:100%;border-collapse:collapse;"><thead><tr>'
+    tabel += '<th style="background:#1e3a5f;color:white;padding:10px;width:16%;">Onderdeel</th>'
+    for h in lh_dc:
+        tabel += f'<th style="background:#1e3a5f;color:white;padding:10px;width:21%;">{h}</th>'
+    tabel += "</tr></thead><tbody>"
+
+    for o in VRAGEN_DC.keys():
+        tabel += "<tr>"
+        tabel += f'<td style="background:#eef2ff;font-weight:700;color:#0f3460;text-align:center;padding:10px;border:1px solid #ddd;">{o}</td>'
+        for lens in [1,2,3,4]:
+            gem = lens_gems_dc.get((o, lens))
+            inh = RUBRIC_DC.get((o, lens), "– (geen koppeling)")
+            achter = dc_kleur(gem)
+            tekst = inh.replace("\n", "<br>")
+            gb = f'<div style="font-weight:700;font-size:0.78rem;color:{dc_kleur_tekst(gem)};margin-bottom:6px;">Gemiddelde: {gem:.2f}</div>' if gem is not None else ""
+            tabel += f'<td style="background:{achter};border:1px solid #ccc;padding:10px;font-size:0.78rem;vertical-align:top;line-height:1.55;">{gb}{tekst}</td>'
+        tabel += "</tr>"
+    tabel += "</tbody></table>"
+    st.markdown(tabel, unsafe_allow_html=True)
+    st.markdown("---")
+
+    # Excel download
+    st.subheader("Resultaten downloaden")
+    excel_bytes = excel_docent(resultaten)
+    st.download_button("Download als Excel (.xlsx)", excel_bytes,
+        f"docent_evaluatie_{datetime.now().strftime('%Y%m%d_%H%M')}.xlsx",
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", use_container_width=True)
+    st.markdown("---")
+    if st.button("Verwijder alle docent evaluatieresultaten"):
+        verwijder_alle(TABEL_DC)
+        st.success("Alle docent evaluatieresultaten zijn verwijderd.")
+        st.rerun()
+
+
+# ═══════════════════════════════════════════════════════════════
+#  EXCEL EXPORT DOCENT
+# ═══════════════════════════════════════════════════════════════
+def excel_docent(resultaten):
+    DB="0F3460"; LB="EEF2FF"; WIT="FFFFFF"
+    thin=Side(style="thin",color="CCCCCC"); dik=Side(style="medium",color="0F3460")
+    rand=Border(left=thin,right=thin,top=thin,bottom=thin)
+    dik_rand=Border(left=dik,right=dik,top=dik,bottom=dik)
+    wb=Workbook()
+
+    # Blad 1: Samenvatting
+    ws=wb.active; ws.title="Samenvatting"; ws.sheet_view.showGridLines=False
+    ws.column_dimensions["A"].width=32
+    for c in ["B","C","D"]: ws.column_dimensions[c].width=18
+    ws.merge_cells("A1:D1"); ws["A1"]="Docent Zelfevaluatie - Resultaten Overzicht"
+    ws["A1"].font=Font(name="Arial",bold=True,size=16,color=WIT); ws["A1"].fill=PatternFill("solid",fgColor=DB)
+    ws["A1"].alignment=Alignment(horizontal="center",vertical="center"); ws.row_dimensions[1].height=36
+    ws.merge_cells("A2:D2"); ws["A2"]=f"Gegenereerd: {datetime.now().strftime('%d-%m-%Y %H:%M')}  |  Totaal: {len(resultaten)}"
+    ws["A2"].font=Font(name="Arial",size=10,color="666666"); ws["A2"].fill=PatternFill("solid",fgColor=LB)
+    ws["A2"].alignment=Alignment(horizontal="center",vertical="center"); ws.row_dimensions[2].height=20; ws.row_dimensions[3].height=8
+    for ci,h in enumerate(["Onderdeel","Gem. score","Oordeel","Responsen"],1):
+        c=ws.cell(row=4,column=ci,value=h); c.font=Font(name="Arial",bold=True,size=10,color=WIT)
+        c.fill=PatternFill("solid",fgColor=DB); c.alignment=Alignment(horizontal="center",vertical="center",wrap_text=True); c.border=rand
+    ws.row_dimensions[4].height=28
+    KLEUR_DC = {"Goed":"2ECC71","Neutraal":"F1C40F","Slecht":"E74C3C"}
+    for rij,onderdeel in enumerate(VRAGEN_DC.keys(),5):
+        gems=[r["sectie_gemiddeldes"].get(onderdeel,0) for r in resultaten]
+        gem=round(sum(gems)/len(gems),2) if gems else 0
+        label="Goed" if gem>=2.34 else ("Neutraal" if gem>=1.67 else "Slecht")
+        kf=PatternFill("solid",fgColor=KLEUR_DC[label])
+        for ci,val in enumerate([onderdeel,gem,label,len(resultaten)],1):
+            c=ws.cell(row=rij,column=ci,value=val); c.font=Font(name="Arial",size=10)
+            c.alignment=Alignment(horizontal="center",vertical="center"); c.border=rand
+            if ci==3: c.fill=kf; c.font=Font(name="Arial",size=10,bold=True,color=WIT if label=="Slecht" else "1a1a2e")
+        ws.row_dimensions[rij].height=22
+
+    # Blad 2: Gemiddelden per stelling
+    ws2=wb.create_sheet("Gemiddelden per stelling"); ws2.sheet_view.showGridLines=False
+    ws2.column_dimensions["A"].width=6; ws2.column_dimensions["B"].width=60; ws2.column_dimensions["C"].width=10; ws2.column_dimensions["D"].width=18; ws2.column_dimensions["E"].width=14
+    ws2.merge_cells("A1:E1"); ws2["A1"]="Gemiddelde score per stelling"
+    ws2["A1"].font=Font(name="Arial",bold=True,size=14,color=WIT); ws2["A1"].fill=PatternFill("solid",fgColor=DB)
+    ws2["A1"].alignment=Alignment(horizontal="center",vertical="center"); ws2.row_dimensions[1].height=30
+    rij=2
+    for onderdeel,stellingen in VRAGEN_DC.items():
+        ws2.row_dimensions[rij].height=8; rij+=1
+        ws2.merge_cells(f"A{rij}:E{rij}"); ws2[f"A{rij}"]=onderdeel
+        ws2[f"A{rij}"].font=Font(name="Arial",bold=True,size=11,color=WIT); ws2[f"A{rij}"].fill=PatternFill("solid",fgColor="1e3a5f")
+        ws2[f"A{rij}"].alignment=Alignment(horizontal="left",vertical="center"); ws2[f"A{rij}"].border=rand; ws2.row_dimensions[rij].height=22; rij+=1
+        for hi,h in enumerate(["#","Stelling","Lens","Theorie","Gem. score"],1):
+            c=ws2.cell(row=rij,column=hi,value=h); c.font=Font(name="Arial",bold=True,size=9,color=WIT)
+            c.fill=PatternFill("solid",fgColor=DB); c.alignment=Alignment(horizontal="center",vertical="center"); c.border=rand
+        ws2.row_dimensions[rij].height=18; rij+=1
+        for vi,(stelling,lens,theorie) in enumerate(stellingen,1):
+            av=[r.get("scores_per_stelling",{}).get(onderdeel,[])[vi-1] for r in resultaten if vi-1<len(r.get("scores_per_stelling",{}).get(onderdeel,[]))]
+            gv=round(sum(av)/len(av),2) if av else "-"
+            kleur_cel=dc_kleur_hex(gv if isinstance(gv,float) else None)
+            kfv=PatternFill("solid",fgColor=kleur_cel)
+            for ci,val in enumerate([vi,stelling,lens,theorie,gv],1):
+                c=ws2.cell(row=rij,column=ci,value=val); c.font=Font(name="Arial",size=9)
+                c.alignment=Alignment(horizontal="center" if ci!=2 else "left",vertical="center",wrap_text=(ci==2)); c.border=rand
+                if ci==5 and isinstance(gv,float): c.fill=kfv
+            ws2.row_dimensions[rij].height=32; rij+=1
+
+    buf=io.BytesIO(); wb.save(buf); buf.seek(0); return buf.getvalue()
+
 def docent_login():
     if st.button("<- Terug naar startpagina"):
         st.session_state["rol"] = None; st.rerun()
@@ -986,21 +1379,37 @@ def docent_login():
         else: st.error("Onjuist wachtwoord.")
 
 def docent_omgeving():
-    c1, c2, c3 = st.columns([3, 2, 1])
+    c1, c2, c3, c4 = st.columns([2, 2, 2, 1])
     with c1:
         st.markdown('<div style="color:#0f3460;font-weight:700;font-size:1.05rem;padding-top:0.5rem;">Docentendashboard</div>', unsafe_allow_html=True)
     with c2:
-        keuze = st.selectbox("Bekijk resultaten van:",
-                             ["Studenten", "Werkveld / Stagebegeleiders"],
-                             key="dash_keuze", label_visibility="collapsed")
+        hoofd_keuze = st.selectbox("Kies optie:",
+                             ["Resultaten inzien", "Eigen cursus evalueren"],
+                             key="docent_hoofd_keuze", label_visibility="collapsed")
     with c3:
+        if hoofd_keuze == "Resultaten inzien":
+            dash_keuze = st.selectbox("Bekijk resultaten van:",
+                                 ["Studenten", "Werkveld / Stagebegeleiders", "Docent Zelfevaluatie"],
+                                 key="dash_keuze", label_visibility="collapsed")
+        else:
+            dash_keuze = None
+    with c4:
         if st.button("Uitloggen", use_container_width=True):
             st.session_state["docent_ingelogd"] = False; st.rerun()
     st.divider()
-    if keuze == "Studenten":
-        dash_studenten()
+
+    if hoofd_keuze == "Eigen cursus evalueren":
+        if st.session_state.get("dc_ingediend", False):
+            docent_evaluatie_bedankt()
+        else:
+            docent_evaluatie_pagina()
     else:
-        dash_werkveld()
+        if dash_keuze == "Studenten":
+            dash_studenten()
+        elif dash_keuze == "Werkveld / Stagebegeleiders":
+            dash_werkveld()
+        else:
+            dash_docent_evaluatie()
 
 # ═══════════════════════════════════════════════════════════════
 #  MAIN
@@ -1013,6 +1422,8 @@ def main():
         ("wv_email", None), ("wv_sh_gezien", False),
         ("wv_ingediend", False), ("wv_resultaat", {}),
         ("st_ingediend", False), ("st_resultaat", {}),
+        ("dc_ingediend", False), ("dc_resultaat", {}),
+        ("docent_keuze", "Resultaten inzien"),
     ]
     for k, v in defaults:
         if k not in st.session_state:

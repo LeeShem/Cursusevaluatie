@@ -1410,6 +1410,122 @@ def excel_docent(resultaten):
                 if ci==5 and isinstance(gv,float): c.fill=kfv
             ws2.row_dimensions[rij].height=32; rij+=1
 
+    # ── Blad 3: Rubric per theorie ──
+    ws3 = wb.create_sheet("Rubric per theorie")
+    ws3.sheet_view.showGridLines = False
+
+    # Kolombreedtes: onderdeel + 4 lens-kolommen
+    ws3.column_dimensions["A"].width = 24
+    ws3.column_dimensions["B"].width = 42
+    ws3.column_dimensions["C"].width = 42
+    ws3.column_dimensions["D"].width = 42
+    ws3.column_dimensions["E"].width = 42
+
+    # Bereken per theorie het gemiddelde (zelfde logica als in de app)
+    theorie_gems = {}
+    for o, stellingen in VRAGEN_DC.items():
+        for i, (stelling, lens, theorie) in enumerate(stellingen):
+            scores = []
+            for r in resultaten:
+                sc = r.get("scores_per_stelling", {}).get(o, [])
+                if i < len(sc):
+                    scores.append(sc[i])
+            theorie_gems[(o, theorie)] = round(sum(scores)/len(scores), 2) if scores else None
+
+    KLEUR_GOED    = "D4EDDA"
+    KLEUR_NEUTR   = "FFF9C4"
+    KLEUR_SLECHT  = "F8D7DA"
+    KLEUR_GEEN    = "E8ECF4"
+
+    def cel_kleur(gem):
+        if gem is None: return KLEUR_GEEN
+        if gem >= 2.34: return KLEUR_GOED
+        elif gem >= 1.67: return KLEUR_NEUTR
+        else: return KLEUR_SLECHT
+
+    def cel_label(gem):
+        if gem is None: return "Geen data"
+        if gem >= 2.34: return "Goed"
+        elif gem >= 1.67: return "Neutraal"
+        else: return "Slecht"
+
+    # Titelrij
+    ws3.merge_cells("A1:E1")
+    ws3["A1"] = "Rubric Docent Zelfevaluatie – Score per theorie"
+    ws3["A1"].font = Font(name="Arial", bold=True, size=14, color=WIT)
+    ws3["A1"].fill = PatternFill("solid", fgColor=DB)
+    ws3["A1"].alignment = Alignment(horizontal="center", vertical="center")
+    ws3.row_dimensions[1].height = 34
+
+    ws3.merge_cells("A2:E2")
+    ws3["A2"] = "Kleur: Groen = Goed (>= 2.34)  |  Geel = Neutraal (1.67 – 2.33)  |  Rood = Slecht (< 1.67)  |  Grijs = Geen data"
+    ws3["A2"].font = Font(name="Arial", size=9, italic=True, color="444444")
+    ws3["A2"].fill = PatternFill("solid", fgColor=LB)
+    ws3["A2"].alignment = Alignment(horizontal="center", vertical="center")
+    ws3.row_dimensions[2].height = 18
+    ws3.row_dimensions[3].height = 6
+
+    # Kolomhoofden
+    lens_headers = [
+        "Lens 1: Niveau & Samenhang\n(Biggs, Bloom, Dublin)",
+        "Lens 2: Didactisch ontwerp\n(Context-Concept, Entwistle, Gagne, Scaffolding)",
+        "Lens 3: Transfer theorie-praktijk\n(Kolb, Miller, Shulman PCK)",
+        "Lens 4: De student en leertools\n(TPACK, Zimmerman)",
+    ]
+    for ci, h in enumerate(["Onderdeel"] + lens_headers, 1):
+        c = ws3.cell(row=4, column=ci, value=h)
+        c.font = Font(name="Arial", bold=True, size=9, color=WIT)
+        c.fill = PatternFill("solid", fgColor="1e3a5f")
+        c.alignment = Alignment(horizontal="center", vertical="center", wrap_text=True)
+        c.border = rand
+    ws3.row_dimensions[4].height = 44
+
+    # Data rijen — per onderdeel één rij, per lens de theorieën met elk hun kleur
+    for ri, (onderdeel, stellingen) in enumerate(VRAGEN_DC.items(), start=5):
+        # Bepaal rijhoogte op basis van max theorieën per lens
+        max_theorieen = max(
+            len([s for s in stellingen if s[1] == l]) for l in [1,2,3,4]
+        )
+        ws3.row_dimensions[ri].height = max(60, max_theorieen * 45)
+
+        # Onderdeel naam
+        c = ws3.cell(row=ri, column=1, value=onderdeel)
+        c.font = Font(name="Arial", bold=True, size=10)
+        c.alignment = Alignment(horizontal="center", vertical="center", wrap_text=True)
+        c.border = dik_rand
+        c.fill = PatternFill("solid", fgColor=LB)
+
+        # Per lens
+        for lens in [1, 2, 3, 4]:
+            # Verzamel alle stellingen voor dit onderdeel + lens
+            cel_stellingen = [(st, th) for st, sl, th in stellingen if sl == lens]
+
+            if not cel_stellingen:
+                c = ws3.cell(row=ri, column=lens + 1, value="– (geen koppeling)")
+                c.font = Font(name="Arial", size=8, color="888888", italic=True)
+                c.alignment = Alignment(horizontal="center", vertical="center")
+                c.border = rand
+                c.fill = PatternFill("solid", fgColor=KLEUR_GEEN)
+            else:
+                # Bouw celinhoud: naam theorie + label + gem + stellingtekst
+                cel_tekst = ""
+                for stelling_tekst, theorie in cel_stellingen:
+                    gem = theorie_gems.get((onderdeel, theorie))
+                    label = cel_label(gem)
+                    gem_str = f"{gem:.2f}" if gem is not None else "–"
+                    cel_tekst += f"{theorie} - {label} ({gem_str})\n{stelling_tekst}\n\n"
+
+                c = ws3.cell(row=ri, column=lens + 1, value=cel_tekst.strip())
+                c.font = Font(name="Arial", size=8)
+                c.alignment = Alignment(horizontal="left", vertical="top", wrap_text=True)
+                c.border = rand
+
+                # Celkleur: gemiddelde van alle theorieën in deze cel
+                gems_in_cel = [theorie_gems.get((onderdeel, th)) for _, th in cel_stellingen
+                               if theorie_gems.get((onderdeel, th)) is not None]
+                gem_cel = round(sum(gems_in_cel)/len(gems_in_cel), 2) if gems_in_cel else None
+                c.fill = PatternFill("solid", fgColor=cel_kleur(gem_cel))
+
     buf=io.BytesIO(); wb.save(buf); buf.seek(0); return buf.getvalue()
 
 def docent_login():

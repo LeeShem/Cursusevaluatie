@@ -16,7 +16,7 @@ DOCENT_WACHTWOORD = "alo"           # ← wachtwoord voor docentendashboard
 
 # Studiehandleiding PDF
 # Zet het PDF-bestand in dezelfde map als dit script en pas de naam hieronder aan.
-STUDIEHANDLEIDING_PAD  = "SHL.pdf"      # ← bestandsnaam aanpassen
+STUDIEHANDLEIDING_PAD  = "SHL_VLB2.pdf"      # ← bestandsnaam aanpassen
 STUDIEHANDLEIDING_NAAM = "Studiehandleiding cursus verantwoord leren lesgeven"   # ← weergavenaam aanpassen
 
 # ═══════════════════════════════════════════════════════════════
@@ -103,6 +103,7 @@ VRAGEN_ST = {
     ],
     "Overig": [
         ("Andere punten die u wilt delen (tips, tricks etc.) wat ten goede komt aan de cursus.", "open"),
+        ("Heb je de cursus gehaald?", "cursus_gehaald"),
     ],
 }
 
@@ -240,7 +241,8 @@ RUBRIC_DC = {
     ("6 - Toetsing & Evaluatie", 4): "Zimmerman: Student krijgt naast oordeel ook concrete feed forward.",
 }
 
-SCORE_LABELS_DC = {1: "Slecht", 2: "Neutraal", 3: "Goed"}
+SCORE_LABELS_DC = {1: "Niet naar wens aanwezig", 2: "Voor verbetering vatbaar", 3: "Naar wens aanwezig"}
+SCORE_NVT = "NVT"
 SCORE_KLEUREN_DC = {1: "#e74c3c", 2: "#f1c40f", 3: "#2ecc71"}
 
 def dc_kleur(gem):
@@ -261,6 +263,13 @@ def dc_kleur_tekst(gem):
     if gem < 1.67: return "#721c24"
     elif gem < 2.34: return "#533f03"
     else: return "#155724"
+
+def dc_label(gem):
+    """Geeft het label terug op basis van gemiddelde score (NVT uitgesloten)."""
+    if gem is None: return "Geen data"
+    if gem < 1.67: return "Niet naar wens aanwezig"
+    elif gem < 2.34: return "Voor verbetering vatbaar"
+    else: return "Naar wens aanwezig"
 
 # ═══════════════════════════════════════════════════════════════
 #  GEDEELDE CONSTANTEN
@@ -340,7 +349,7 @@ def is_geldig_email(e):
 
 
 
-def sla_student_op(spv, sg, sn, tn, open_antwoord=""):
+def sla_student_op(spv, sg, sn, tn, open_antwoord="", cursus_gehaald=""):
     schrijf_rij(TABEL_ST, {
         "tijdstip": datetime.now().strftime("%Y-%m-%d %H:%M"),
         "scores_per_vraag": spv,
@@ -348,6 +357,7 @@ def sla_student_op(spv, sg, sn, tn, open_antwoord=""):
         "sectie_niveaus": sn,
         "totaal_niveau": tn,
         "open_antwoord": open_antwoord.strip(),
+        "cursus_gehaald": cursus_gehaald,
     })
 
 def sla_werkveld_op(email, scores, spv, niveaus, tn, fg):
@@ -361,13 +371,14 @@ def sla_werkveld_op(email, scores, spv, niveaus, tn, fg):
         "focusgroep": fg,
     })
 
-def sla_docent_op(scores_per_stelling, sectie_gemiddeldes, sectie_niveaus, totaal_gem):
+def sla_docent_op(scores_per_stelling, sectie_gemiddeldes, sectie_niveaus, totaal_gem, argumentaties=None):
     schrijf_rij(TABEL_DC, {
         "tijdstip": datetime.now().strftime("%Y-%m-%d %H:%M"),
         "scores_per_stelling": scores_per_stelling,
         "sectie_gemiddeldes": sectie_gemiddeldes,
         "sectie_niveaus": sectie_niveaus,
         "totaal_gemiddelde": totaal_gem,
+        "argumentaties": argumentaties or {},
     })
 
 def bereken_lens_gemiddeldes(resultaten):
@@ -531,6 +542,30 @@ def excel_studenten(resultaten):
     else:
         ws4.merge_cells("A5:C5"); ws4["A5"]="Geen open antwoorden ingestuurd."
         ws4["A5"].font=Font(name="Arial",size=10,italic=True,color="888888"); ws4["A5"].alignment=Alignment(horizontal="center",vertical="center")
+
+    ws5=wb.create_sheet("Cursus gehaald"); ws5.sheet_view.showGridLines=False
+    ws5.column_dimensions["A"].width=6; ws5.column_dimensions["B"].width=22; ws5.column_dimensions["C"].width=36
+    ws5.merge_cells("A1:C1"); ws5["A1"]="Cursus gehaald - Overzicht"
+    ws5["A1"].font=Font(name="Arial",bold=True,size=14,color=WIT); ws5["A1"].fill=PatternFill("solid",fgColor=DB)
+    ws5["A1"].alignment=Alignment(horizontal="center",vertical="center"); ws5.row_dimensions[1].height=30
+    cg_opties=["Ja","Nee","Zeg ik liever niet / NVT"]
+    cg_kleuren={"Ja":"D4EDDA","Nee":"F8D7DA","Zeg ik liever niet / NVT":"EEF2FF"}
+    cg_counts={o:sum(1 for r in resultaten if r.get("cursus_gehaald","Zeg ik liever niet / NVT")==o) for o in cg_opties}
+    totaal_cg=len(resultaten)
+    ws5.merge_cells("A2:C2"); ws5["A2"]=f"Totaal responsen: {totaal_cg}"
+    ws5["A2"].font=Font(name="Arial",size=10,color="666666"); ws5["A2"].fill=PatternFill("solid",fgColor=LB)
+    ws5["A2"].alignment=Alignment(horizontal="center",vertical="center"); ws5.row_dimensions[2].height=18; ws5.row_dimensions[3].height=6
+    for ci,h in enumerate(["#","Antwoord","Aantal (%)"],1):
+        c=ws5.cell(row=4,column=ci,value=h); c.font=Font(name="Arial",bold=True,size=10,color=WIT)
+        c.fill=PatternFill("solid",fgColor=DB); c.alignment=Alignment(horizontal="center",vertical="center"); c.border=rand
+    ws5.row_dimensions[4].height=22
+    for ri,(opt) in enumerate(cg_opties,5):
+        cnt=cg_counts[opt]; pct=round(cnt/totaal_cg*100) if totaal_cg>0 else 0
+        kf=PatternFill("solid",fgColor=cg_kleuren[opt])
+        for ci,val in enumerate([ri-4,opt,f"{cnt}  ({pct}%)"],1):
+            c=ws5.cell(row=ri,column=ci,value=val); c.font=Font(name="Arial",size=10)
+            c.alignment=Alignment(horizontal="center",vertical="center"); c.border=rand; c.fill=kf
+        ws5.row_dimensions[ri].height=22
 
     buf=io.BytesIO(); wb.save(buf); buf.seek(0); return buf.getvalue()
 
@@ -743,6 +778,14 @@ def student_pagina():
                 f"**1.** {vraaglijst[0][0]}",
                 placeholder="Typ hier uw opmerkingen, tips of suggesties...",
                 key="st_overig_open", height=120)
+            st.markdown(f"**2.** Heb je de cursus gehaald?")
+            cursus_gehaald_antw = st.radio(
+                "Cursus gehaald",
+                options=["Ja", "Nee", "Zeg ik liever niet / NVT"],
+                index=2,
+                horizontal=True,
+                key="st_cursus_gehaald",
+                label_visibility="collapsed")
             alle_scores[onderdeel] = []
         else:
             sc = []
@@ -757,7 +800,8 @@ def student_pagina():
             if not sc: continue
             g = sum(sc)/len(sc); sg[o] = round(g,2); sn[o] = bereken_niveau(g)
         tg = sum(sg.values())/len(sg); tn = bereken_niveau(tg)
-        sla_student_op(alle_scores, sg, sn, tn, open_antwoord_tekst)
+        cursus_gehaald_antw = st.session_state.get("st_cursus_gehaald", "Zeg ik liever niet / NVT")
+        sla_student_op(alle_scores, sg, sn, tn, open_antwoord_tekst, cursus_gehaald_antw)
         st.session_state["st_ingediend"] = True
         st.session_state["st_resultaat"] = {
             "niveaus": sn, "gemiddeldes": sg, "totaal_niveau": tn
@@ -921,7 +965,7 @@ def wv_bedankt():
 def dash_studenten():
     st.markdown("""
     <div class="dashboard-header">
-        <h2 style="margin:0;font-family:'DM Serif Display',serif;">Dashboard - Studentenevaluatie (voor docent zelfevaluatie zie boven de switch)</h2>
+        <h2 style="margin:0;font-family:'DM Serif Display',serif;">Dashboard - Studentenevaluatie</h2>
         <p style="margin:0.4rem 0 0;opacity:0.85;">Academie voor Lichamelijke Opvoeding - resultaten van studenten. <br>
         Graag na het downloaden van de resultaten de resultaten verwijderen zodat de volgende gerbuiker hier betrouwbare informatie uithaald.</p>
     </div>""", unsafe_allow_html=True)
@@ -1011,6 +1055,25 @@ def dash_studenten():
         st.info("Er zijn nog geen open antwoorden ingestuurd.")
     st.markdown("---")
 
+    st.subheader("Cursus gehaald - Overzicht")
+    cg_counts = {"Ja": 0, "Nee": 0, "Zeg ik liever niet / NVT": 0}
+    for r in resultaten:
+        antw = r.get("cursus_gehaald", "Zeg ik liever niet / NVT")
+        if antw in cg_counts:
+            cg_counts[antw] += 1
+        else:
+            cg_counts["Zeg ik liever niet / NVT"] += 1
+    totaal_cg = len(resultaten)
+    c1, c2, c3 = st.columns(3)
+    kleuren_cg = {"Ja": ("#d4edda","#155724"), "Nee": ("#f8d7da","#721c24"), "Zeg ik liever niet / NVT": ("#eef2ff","#0f3460")}
+    for col, (optie, achter_tekst) in zip([c1,c2,c3], kleuren_cg.items()):
+        achter, tekst = achter_tekst
+        cnt = cg_counts[optie]
+        pct = round(cnt/totaal_cg*100) if totaal_cg > 0 else 0
+        with col:
+            st.markdown(f'<div style="background:{achter};border-radius:10px;padding:1rem 1.2rem;text-align:center;"><div style="font-size:2rem;font-weight:700;color:{tekst};">{cnt}</div><div style="font-weight:600;color:{tekst};font-size:0.9rem;">{optie}</div><div style="color:#555;font-size:0.8rem;">{pct}% van de responsen</div></div>', unsafe_allow_html=True)
+    st.markdown("---")
+
     st.subheader("Resultaten downloaden")
     st.download_button("Download als Excel (.xlsx)", excel_studenten(resultaten),
         f"studenten_evaluatie_{datetime.now().strftime('%Y%m%d_%H%M')}.xlsx",
@@ -1027,8 +1090,7 @@ def dash_werkveld():
     st.markdown("""
     <div class="dashboard-header">
         <h2 style="margin:0;font-family:'DM Serif Display',serif;">Dashboard - Werkveld evaluatie</h2>
-        <p style="margin:0.3rem 0 0;opacity:0.8;">Overzicht van alle ingestuurde werkveld evaluaties. <br>
-        Graag na het downloaden van de resultaten de resultaten verwijderen zodat de volgende gerbuiker hier betrouwbare informatie uithaald.</p>
+        <p style="margin:0.3rem 0 0;opacity:0.8;">Overzicht van alle ingestuurde werkveld evaluaties</p>
     </div>""", unsafe_allow_html=True)
     resultaten = laad(TABEL_WV)
     if not resultaten:
@@ -1114,42 +1176,61 @@ def docent_evaluatie_pagina():
         <h1>Docent Cursus Zelfevaluatie</h1>
         <p>Beoordeel de kwaliteit van uw eigen cursus aan de hand van onderstaande stellingen.<br>
         Elke stelling is gekoppeld aan een theoretisch kader uit de rubric.<br>
-        <em>Kies per stelling: Slecht (1), Neutraal (2) of Goed (3).</em></p>
+        <em>Kies per stelling: Niet naar wens aanwezig (1), Voor verbetering vatbaar (2), Naar wens aanwezig (3) of NVT.</em></p>
     </div>""", unsafe_allow_html=True)
     st.divider()
 
     alle_scores = {}
+    alle_argumentaties = {}
     for onderdeel, stellingen in VRAGEN_DC.items():
         st.markdown(f'<div class="sectie-card"><h3>📌 {onderdeel}</h3></div>', unsafe_allow_html=True)
         sc = []
+        args = []
         for i, (stelling, lens, theorie) in enumerate(stellingen, 1):
             col1, col2 = st.columns([3, 1])
             with col1:
                 st.markdown(f"**{i}.** {stelling}")
                 st.caption(f"Lens {lens} – {theorie}")
             with col2:
-                score = st.select_slider(
-                    f"Beoordeling",
-                    options=[1, 2, 3],
-                    value=2,
-                    format_func=lambda x: SCORE_LABELS_DC[x],
+                score_optie = st.radio(
+                    "Beoordeling",
+                    options=["Niet naar wens aanwezig", "Voor verbetering vatbaar", "Naar wens aanwezig", "NVT"],
+                    index=1,
                     key=f"dc_{onderdeel}_{i}",
-                    label_visibility="collapsed"
+                    label_visibility="collapsed",
                 )
-            sc.append(score)
+            argumentatie = st.text_area(
+                "Toelichting (optioneel)",
+                placeholder="Onderbouw uw beoordeling hier...",
+                key=f"dc_arg_{onderdeel}_{i}",
+                height=80,
+                label_visibility="visible",
+            )
+            label_to_score = {
+                "Niet naar wens aanwezig": 1,
+                "Voor verbetering vatbaar": 2,
+                "Naar wens aanwezig": 3,
+                "NVT": None,
+            }
+            sc.append(label_to_score[score_optie])
+            args.append(argumentatie.strip())
             st.markdown("---")
         alle_scores[onderdeel] = sc
+        alle_argumentaties[onderdeel] = args
 
     c1, c2, c3 = st.columns([1, 2, 1])
     with c2:
         if st.button("Stuur mijn zelfevaluatie in", use_container_width=True):
             sg, sn = {}, {}
             for o, sc in alle_scores.items():
-                g = round(sum(sc)/len(sc), 2)
+                # Exclude NVT (None) from average calculation
+                geldig = [s for s in sc if s is not None]
+                g = round(sum(geldig)/len(geldig), 2) if geldig else None
                 sg[o] = g
-                sn[o] = "Goed" if g >= 2.34 else ("Neutraal" if g >= 1.67 else "Slecht")
-            tg = round(sum(sg.values())/len(sg), 2)
-            sla_docent_op(alle_scores, sg, sn, tg)
+                sn[o] = dc_label(g)
+            geldig_totaal = [v for v in sg.values() if v is not None]
+            tg = round(sum(geldig_totaal)/len(geldig_totaal), 2) if geldig_totaal else None
+            sla_docent_op(alle_scores, sg, sn, tg, alle_argumentaties)
             st.session_state["dc_ingediend"] = True
             st.session_state["dc_resultaat"] = {"sectie_gemiddeldes": sg, "sectie_niveaus": sn, "totaal_gemiddelde": tg}
             st.rerun()
@@ -1175,8 +1256,9 @@ def docent_evaluatie_bedankt():
             st.markdown(f'<div class="rubric-card" style="background:{kleur};color:#1a1a2e;"><h4>{o}</h4><div class="badge">{label}</div><div class="sub">Gemiddelde: {gem:.2f}</div></div>', unsafe_allow_html=True)
 
     kleur_tot = dc_kleur(tg)
-    label_tot = "Goed" if tg >= 2.34 else ("Neutraal" if tg >= 1.67 else "Slecht")
-    st.markdown(f'<div class="totaal-badge" style="background:linear-gradient(135deg,{kleur_tot}cc,{kleur_tot});color:#1a1a2e;"><div class="label">Totaal Gemiddelde</div><div class="tekst">{label_tot}</div><div style="margin-top:0.5rem;opacity:0.85;font-size:0.9rem;">Gemiddelde over alle stellingen: {tg:.2f}</div></div>', unsafe_allow_html=True)
+    label_tot = dc_label(tg)
+    gem_str = f"{tg:.2f}" if tg is not None else "–"
+    st.markdown(f'<div class="totaal-badge" style="background:linear-gradient(135deg,{kleur_tot}cc,{kleur_tot});color:#1a1a2e;"><div class="label">Totaal Gemiddelde</div><div class="tekst">{label_tot}</div><div style="margin-top:0.5rem;opacity:0.85;font-size:0.9rem;">Gemiddelde over alle stellingen: {gem_str}</div></div>', unsafe_allow_html=True)
 
     st.markdown("&nbsp;")
     if st.button("Terug naar dashboard"):
@@ -1193,8 +1275,7 @@ def dash_docent_evaluatie():
     st.markdown("""
     <div class="dashboard-header">
         <h2 style="margin:0;font-family:'DM Serif Display',serif;">Dashboard - Docent Zelfevaluatie</h2>
-        <p style="margin:0.4rem 0 0;opacity:0.85;">Overzicht van alle ingediende docent zelfevaluaties. <br>
-        Graag na het downloaden van de resultaten de resultaten verwijderen zodat de volgende gerbuiker hier betrouwbare informatie uithaald.</p>
+        <p style="margin:0.4rem 0 0;opacity:0.85;">Overzicht van alle ingediende docent zelfevaluaties</p>
     </div>""", unsafe_allow_html=True)
 
     resultaten = laad(TABEL_DC)
@@ -1214,11 +1295,12 @@ def dash_docent_evaluatie():
     # Gemiddelden per onderdeel
     st.subheader("Gemiddelde scores per onderdeel")
     for onderdeel in VRAGEN_DC.keys():
-        gems = [r["sectie_gemiddeldes"].get(onderdeel, 0) for r in resultaten]
-        gem = round(sum(gems)/len(gems), 2) if gems else 0
+        gems = [r["sectie_gemiddeldes"].get(onderdeel) for r in resultaten if r["sectie_gemiddeldes"].get(onderdeel) is not None]
+        gem = round(sum(gems)/len(gems), 2) if gems else None
         kleur = dc_kleur(gem)
-        label = "Goed" if gem >= 2.34 else ("Neutraal" if gem >= 1.67 else "Slecht")
-        st.markdown(f'<div style="background:{kleur};border-radius:8px;padding:0.7rem 1rem;margin-bottom:0.5rem;"><strong>{onderdeel}:</strong> {label} (gemiddelde: {gem:.2f})</div>', unsafe_allow_html=True)
+        label = dc_label(gem)
+        gem_str = f"{gem:.2f}" if gem is not None else "–"
+        st.markdown(f'<div style="background:{kleur};border-radius:8px;padding:0.7rem 1rem;margin-bottom:0.5rem;"><strong>{onderdeel}:</strong> {label} (gemiddelde: {gem_str})</div>', unsafe_allow_html=True)
 
     st.markdown("---")
 
@@ -1226,36 +1308,59 @@ def dash_docent_evaluatie():
     st.subheader("Gemiddelde scores per stelling")
     for onderdeel, stellingen in VRAGEN_DC.items():
         with st.expander(f"📌 {onderdeel}", expanded=False):
-            gl = [r["sectie_gemiddeldes"].get(onderdeel, 0) for r in resultaten]
-            gs = round(sum(gl)/len(gl), 2) if gl else 0
+            gl = [r["sectie_gemiddeldes"].get(onderdeel) for r in resultaten if r["sectie_gemiddeldes"].get(onderdeel) is not None]
+            gs = round(sum(gl)/len(gl), 2) if gl else None
             kleur_s = dc_kleur(gs)
-            st.markdown(f'<div style="background:{kleur_s};border-radius:8px;padding:0.7rem 1rem;margin-bottom:1rem;"><strong>Onderdeel gemiddelde: {gs:.2f}</strong></div>', unsafe_allow_html=True)
+            gs_str = f"{gs:.2f}" if gs is not None else "–"
+            st.markdown(f'<div style="background:{kleur_s};border-radius:8px;padding:0.7rem 1rem;margin-bottom:1rem;"><strong>Onderdeel gemiddelde: {gs_str}</strong></div>', unsafe_allow_html=True)
             rows = []
             for vi, (stelling, lens, theorie) in enumerate(stellingen, 1):
-                av = [r.get("scores_per_stelling", {}).get(onderdeel, [])[vi-1]
-                      for r in resultaten
-                      if vi-1 < len(r.get("scores_per_stelling", {}).get(onderdeel, []))]
-                gv = round(sum(av)/len(av), 2) if av else "-"
-                label_v = "-" if gv == "-" else ("Goed" if gv >= 2.34 else ("Neutraal" if gv >= 1.67 else "Slecht"))
-                rows.append({"Nr.": vi, "Stelling": stelling, "Lens": lens, "Theorie": theorie, "Gemiddelde": gv, "Oordeel": label_v})
+                raw_scores = [r.get("scores_per_stelling", {}).get(onderdeel, [])[vi-1]
+                              for r in resultaten
+                              if vi-1 < len(r.get("scores_per_stelling", {}).get(onderdeel, []))]
+                # Filter out NVT (None values)
+                geldig_sc = [s for s in raw_scores if s is not None]
+                nvt_count = raw_scores.count(None)
+                gv = round(sum(geldig_sc)/len(geldig_sc), 2) if geldig_sc else None
+                gv_str = f"{gv:.2f}" if gv is not None else "–"
+                label_v = dc_label(gv)
+                nvt_str = f" ({nvt_count}× NVT)" if nvt_count > 0 else ""
+                rows.append({"Nr.": vi, "Stelling": stelling, "Lens": lens, "Theorie": theorie, "Gemiddelde": gv_str + nvt_str, "Oordeel": label_v})
             st.dataframe(pd.DataFrame(rows), use_container_width=True, hide_index=True)
+
+            # Toon argumentaties per stelling
+            heeft_args = any(
+                r.get("argumentaties", {}).get(onderdeel, [""] * len(stellingen))[vi-1]
+                for r in resultaten
+                for vi in range(1, len(stellingen)+1)
+                if vi-1 < len(r.get("argumentaties", {}).get(onderdeel, []))
+            )
+            if heeft_args:
+                st.markdown("**Toelichtingen per stelling:**")
+                for vi, (stelling, lens, theorie) in enumerate(stellingen, 1):
+                    args = [r.get("argumentaties", {}).get(onderdeel, [])[vi-1]
+                            for r in resultaten
+                            if vi-1 < len(r.get("argumentaties", {}).get(onderdeel, []))
+                            and r.get("argumentaties", {}).get(onderdeel, [])[vi-1]]
+                    if args:
+                        st.markdown(f"*Stelling {vi}: {stelling[:80]}...*" if len(stelling)>80 else f"*Stelling {vi}: {stelling}*")
+                        for idx_a, arg in enumerate(args, 1):
+                            st.markdown(f'<div style="background:#f0f9ff;border-left:3px solid #7dd3fc;border-radius:6px;padding:0.5rem 0.8rem;margin-bottom:0.3rem;font-size:0.88rem;">#{idx_a}: {arg}</div>', unsafe_allow_html=True)
 
     st.markdown("---")
 
     # Rubric
     st.subheader("Rubric - Analysemodel Docent Zelfevaluatie")
-    st.caption("Kleur geeft het gemiddelde aan over alle ingediende evaluaties. Groen = Goed | Geel = Neutraal | Rood = Slecht")
+    st.caption("Kleur geeft het gemiddelde aan over alle ingediende evaluaties. NVT-beoordelingen worden uitgesloten van het gemiddelde.")
 
-    # Bereken lens gemiddeldes voor docent
-    # Bereken per onderdeel, per theorie het gemiddelde op basis van ALLEEN die stelling
-    # theorie_gems_dc = { (onderdeel, theorie_label): gemiddelde_score }
+    # Bereken per onderdeel, per theorie het gemiddelde (NVT = None uitgesloten)
     theorie_gems_dc = {}
     for o, stellingen in VRAGEN_DC.items():
         for i, (stelling, lens, theorie) in enumerate(stellingen):
             scores = []
             for r in resultaten:
                 sc = r.get("scores_per_stelling", {}).get(o, [])
-                if i < len(sc):
+                if i < len(sc) and sc[i] is not None:
                     scores.append(sc[i])
             theorie_gems_dc[(o, theorie)] = round(sum(scores)/len(scores), 2) if scores else None
 
@@ -1266,19 +1371,11 @@ def dash_docent_evaluatie():
         "Lens 4: De student en leertools<br><small>(TPACK, Zimmerman)</small>",
     ]
 
-    # Welke theorieën horen bij welke lens (vaste mapping)
-    LENS_THEORIEEN = {
-        1: ["Biggs", "Bloom", "Dublin"],
-        2: ["Gagné", "Context-Concept", "Scaffolding", "Entwistle"],
-        3: ["Shulman PCK", "Kolb", "Miller"],
-        4: ["Zimmerman", "TPACK"],
-    }
-
     st.markdown("""<div style="display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:0.8rem;font-size:0.8rem;">
-    <span style="background:#f8d7da;padding:3px 10px;border-radius:6px;">Rood = Slecht (&lt; 1.67)</span>
-    <span style="background:#fff9c4;padding:3px 10px;border-radius:6px;">Geel = Neutraal (1.67 - 2.33)</span>
-    <span style="background:#d4edda;padding:3px 10px;border-radius:6px;">Groen = Goed (&gt; 2.33)</span>
-    <span style="background:#e8ecf4;padding:3px 10px;border-radius:6px;">Grijs = Geen data</span></div>""", unsafe_allow_html=True)
+    <span style="background:#f8d7da;padding:3px 10px;border-radius:6px;">Rood = Niet naar wens aanwezig (&lt; 1.67)</span>
+    <span style="background:#fff9c4;padding:3px 10px;border-radius:6px;">Geel = Voor verbetering vatbaar (1.67–2.33)</span>
+    <span style="background:#d4edda;padding:3px 10px;border-radius:6px;">Groen = Naar wens aanwezig (&gt; 2.33)</span>
+    <span style="background:#e8ecf4;padding:3px 10px;border-radius:6px;">Grijs = Geen data / NVT</span></div>""", unsafe_allow_html=True)
 
     tabel = '<table class="rubric-tabel" style="width:100%;border-collapse:collapse;"><thead><tr>'
     tabel += '<th style="background:#1e3a5f;color:white;padding:10px;width:16%;">Onderdeel</th>'
@@ -1291,12 +1388,10 @@ def dash_docent_evaluatie():
         tabel += f'<td style="background:#eef2ff;font-weight:700;color:#0f3460;text-align:center;padding:10px;border:1px solid #ddd;vertical-align:top;">{o}</td>'
 
         for lens in [1,2,3,4]:
-            # Haal de theorieën op die in dit onderdeel + deze lens voorkomen
             theorieen_in_cel = []
             for stelling, sl, theorie in VRAGEN_DC[o]:
                 if sl == lens:
                     theorieen_in_cel.append(theorie)
-            # Unieke volgorde behouden
             gezien = set()
             unieke_theorieen = []
             for t in theorieen_in_cel:
@@ -1313,9 +1408,8 @@ def dash_docent_evaluatie():
                     achter = dc_kleur(gem)
                     tekst_kleur = dc_kleur_tekst(gem) if gem is not None else "#555"
                     gem_str = f"{gem:.2f}" if gem is not None else "–"
-                    label_str = ("Goed" if gem >= 2.34 else ("Neutraal" if gem >= 1.67 else "Slecht")) if gem is not None else "Geen data"
+                    label_str = dc_label(gem)
 
-                    # Haal de bijbehorende stelling tekst op
                     stelling_tekst = ""
                     for st_tekst, st_lens, st_theorie in VRAGEN_DC[o]:
                         if st_lens == lens and st_theorie == theorie:
@@ -1373,21 +1467,22 @@ def excel_docent(resultaten):
         c=ws.cell(row=4,column=ci,value=h); c.font=Font(name="Arial",bold=True,size=10,color=WIT)
         c.fill=PatternFill("solid",fgColor=DB); c.alignment=Alignment(horizontal="center",vertical="center",wrap_text=True); c.border=rand
     ws.row_dimensions[4].height=28
-    KLEUR_DC = {"Goed":"2ECC71","Neutraal":"F1C40F","Slecht":"E74C3C"}
+    KLEUR_DC = {"Naar wens aanwezig":"2ECC71","Voor verbetering vatbaar":"F1C40F","Niet naar wens aanwezig":"E74C3C","Geen data":"E8ECF4"}
     for rij,onderdeel in enumerate(VRAGEN_DC.keys(),5):
-        gems=[r["sectie_gemiddeldes"].get(onderdeel,0) for r in resultaten]
-        gem=round(sum(gems)/len(gems),2) if gems else 0
-        label="Goed" if gem>=2.34 else ("Neutraal" if gem>=1.67 else "Slecht")
-        kf=PatternFill("solid",fgColor=KLEUR_DC[label])
-        for ci,val in enumerate([onderdeel,gem,label,len(resultaten)],1):
+        gems=[r["sectie_gemiddeldes"].get(onderdeel) for r in resultaten if r["sectie_gemiddeldes"].get(onderdeel) is not None]
+        gem=round(sum(gems)/len(gems),2) if gems else None
+        label=dc_label(gem)
+        gem_str=f"{gem:.2f}" if gem is not None else "–"
+        kf=PatternFill("solid",fgColor=KLEUR_DC.get(label,"E8ECF4"))
+        for ci,val in enumerate([onderdeel,gem_str,label,len(resultaten)],1):
             c=ws.cell(row=rij,column=ci,value=val); c.font=Font(name="Arial",size=10)
             c.alignment=Alignment(horizontal="center",vertical="center"); c.border=rand
-            if ci==3: c.fill=kf; c.font=Font(name="Arial",size=10,bold=True,color=WIT if label=="Slecht" else "1a1a2e")
+            if ci==3: c.fill=kf; c.font=Font(name="Arial",size=10,bold=True,color=WIT if label=="Niet naar wens aanwezig" else "1a1a2e")
         ws.row_dimensions[rij].height=22
 
     # Blad 2: Gemiddelden per stelling
     ws2=wb.create_sheet("Gemiddelden per stelling"); ws2.sheet_view.showGridLines=False
-    ws2.column_dimensions["A"].width=6; ws2.column_dimensions["B"].width=60; ws2.column_dimensions["C"].width=10; ws2.column_dimensions["D"].width=18; ws2.column_dimensions["E"].width=14
+    ws2.column_dimensions["A"].width=6; ws2.column_dimensions["B"].width=60; ws2.column_dimensions["C"].width=10; ws2.column_dimensions["D"].width=18; ws2.column_dimensions["E"].width=14; ws2.column_dimensions["F"].width=12
     ws2.merge_cells("A1:E1"); ws2["A1"]="Gemiddelde score per stelling"
     ws2["A1"].font=Font(name="Arial",bold=True,size=14,color=WIT); ws2["A1"].fill=PatternFill("solid",fgColor=DB)
     ws2["A1"].alignment=Alignment(horizontal="center",vertical="center"); ws2.row_dimensions[1].height=30
@@ -1397,19 +1492,21 @@ def excel_docent(resultaten):
         ws2.merge_cells(f"A{rij}:E{rij}"); ws2[f"A{rij}"]=onderdeel
         ws2[f"A{rij}"].font=Font(name="Arial",bold=True,size=11,color=WIT); ws2[f"A{rij}"].fill=PatternFill("solid",fgColor="1e3a5f")
         ws2[f"A{rij}"].alignment=Alignment(horizontal="left",vertical="center"); ws2[f"A{rij}"].border=rand; ws2.row_dimensions[rij].height=22; rij+=1
-        for hi,h in enumerate(["#","Stelling","Lens","Theorie","Gem. score"],1):
+        for hi,h in enumerate(["#","Stelling","Lens","Theorie","Gem. score","NVT-count"],1):
             c=ws2.cell(row=rij,column=hi,value=h); c.font=Font(name="Arial",bold=True,size=9,color=WIT)
             c.fill=PatternFill("solid",fgColor=DB); c.alignment=Alignment(horizontal="center",vertical="center"); c.border=rand
         ws2.row_dimensions[rij].height=18; rij+=1
         for vi,(stelling,lens,theorie) in enumerate(stellingen,1):
-            av=[r.get("scores_per_stelling",{}).get(onderdeel,[])[vi-1] for r in resultaten if vi-1<len(r.get("scores_per_stelling",{}).get(onderdeel,[]))]
-            gv=round(sum(av)/len(av),2) if av else "-"
-            kleur_cel=dc_kleur_hex(gv if isinstance(gv,float) else None)
+            raw=[r.get("scores_per_stelling",{}).get(onderdeel,[])[vi-1] for r in resultaten if vi-1<len(r.get("scores_per_stelling",{}).get(onderdeel,[]))]
+            geldig=[s for s in raw if s is not None]; nvt_cnt=raw.count(None)
+            gv=round(sum(geldig)/len(geldig),2) if geldig else None
+            gv_str=f"{gv:.2f}" if gv is not None else "–"
+            kleur_cel=dc_kleur_hex(gv)
             kfv=PatternFill("solid",fgColor=kleur_cel)
-            for ci,val in enumerate([vi,stelling,lens,theorie,gv],1):
+            for ci,val in enumerate([vi,stelling,lens,theorie,gv_str,nvt_cnt if nvt_cnt>0 else ""],1):
                 c=ws2.cell(row=rij,column=ci,value=val); c.font=Font(name="Arial",size=9)
                 c.alignment=Alignment(horizontal="center" if ci!=2 else "left",vertical="center",wrap_text=(ci==2)); c.border=rand
-                if ci==5 and isinstance(gv,float): c.fill=kfv
+                if ci==5: c.fill=kfv
             ws2.row_dimensions[rij].height=32; rij+=1
 
     # ── Blad 3: Rubric per theorie ──
@@ -1423,14 +1520,14 @@ def excel_docent(resultaten):
     ws3.column_dimensions["D"].width = 42
     ws3.column_dimensions["E"].width = 42
 
-    # Bereken per theorie het gemiddelde (zelfde logica als in de app)
+    # Bereken per theorie het gemiddelde — NVT (None) uitgesloten
     theorie_gems = {}
     for o, stellingen in VRAGEN_DC.items():
         for i, (stelling, lens, theorie) in enumerate(stellingen):
             scores = []
             for r in resultaten:
                 sc = r.get("scores_per_stelling", {}).get(o, [])
-                if i < len(sc):
+                if i < len(sc) and sc[i] is not None:
                     scores.append(sc[i])
             theorie_gems[(o, theorie)] = round(sum(scores)/len(scores), 2) if scores else None
 
@@ -1446,10 +1543,10 @@ def excel_docent(resultaten):
         else: return KLEUR_SLECHT
 
     def cel_label(gem):
-        if gem is None: return "Geen data"
-        if gem >= 2.34: return "Goed"
-        elif gem >= 1.67: return "Neutraal"
-        else: return "Slecht"
+        if gem is None: return "Geen data / NVT"
+        if gem >= 2.34: return "Naar wens aanwezig"
+        elif gem >= 1.67: return "Voor verbetering vatbaar"
+        else: return "Niet naar wens aanwezig"
 
     # Titelrij
     ws3.merge_cells("A1:E1")
@@ -1460,7 +1557,7 @@ def excel_docent(resultaten):
     ws3.row_dimensions[1].height = 34
 
     ws3.merge_cells("A2:E2")
-    ws3["A2"] = "Kleur: Groen = Goed (>= 2.34)  |  Geel = Neutraal (1.67 – 2.33)  |  Rood = Slecht (< 1.67)  |  Grijs = Geen data"
+    ws3["A2"] = "Groen = Naar wens aanwezig (>= 2.34)  |  Geel = Voor verbetering vatbaar (1.67–2.33)  |  Rood = Niet naar wens aanwezig (< 1.67)  |  Grijs = Geen data / NVT"
     ws3["A2"].font = Font(name="Arial", size=9, italic=True, color="444444")
     ws3["A2"].fill = PatternFill("solid", fgColor=LB)
     ws3["A2"].alignment = Alignment(horizontal="center", vertical="center")
@@ -1527,6 +1624,47 @@ def excel_docent(resultaten):
                                if theorie_gems.get((onderdeel, th)) is not None]
                 gem_cel = round(sum(gems_in_cel)/len(gems_in_cel), 2) if gems_in_cel else None
                 c.fill = PatternFill("solid", fgColor=cel_kleur(gem_cel))
+
+    # Blad 4: Argumentaties per stelling
+    ws4 = wb.create_sheet("Toelichtingen")
+    ws4.sheet_view.showGridLines = False
+    ws4.column_dimensions["A"].width = 6
+    ws4.column_dimensions["B"].width = 28
+    ws4.column_dimensions["C"].width = 55
+    ws4.column_dimensions["D"].width = 10
+    ws4.column_dimensions["E"].width = 50
+    ws4.merge_cells("A1:E1"); ws4["A1"] = "Toelichtingen per stelling (open argumentaties)"
+    ws4["A1"].font = Font(name="Arial", bold=True, size=14, color=WIT)
+    ws4["A1"].fill = PatternFill("solid", fgColor=DB)
+    ws4["A1"].alignment = Alignment(horizontal="center", vertical="center")
+    ws4.row_dimensions[1].height = 30
+    for ci, h in enumerate(["#","Onderdeel","Stelling","Lens","Toelichting"],1):
+        c = ws4.cell(row=2, column=ci, value=h)
+        c.font = Font(name="Arial", bold=True, size=9, color=WIT)
+        c.fill = PatternFill("solid", fgColor=DB)
+        c.alignment = Alignment(horizontal="center", vertical="center"); c.border = rand
+    ws4.row_dimensions[2].height = 18
+    arg_rij = 3; arg_nr = 1
+    for o, stellingen in VRAGEN_DC.items():
+        for vi, (stelling, lens, theorie) in enumerate(stellingen):
+            args = [r.get("argumentaties", {}).get(o, [])[vi]
+                    for r in resultaten
+                    if vi < len(r.get("argumentaties", {}).get(o, []))
+                    and r.get("argumentaties", {}).get(o, [])[vi]]
+            for arg_tekst in args:
+                achter = "F8F9FF" if arg_rij % 2 == 0 else "FFFFFF"
+                for ci, val in enumerate([arg_nr, o, stelling, lens, arg_tekst], 1):
+                    c = ws4.cell(row=arg_rij, column=ci, value=val)
+                    c.font = Font(name="Arial", size=9)
+                    c.alignment = Alignment(horizontal="center" if ci not in (2,3,5) else "left",
+                                            vertical="top", wrap_text=True)
+                    c.border = rand; c.fill = PatternFill("solid", fgColor=achter)
+                ws4.row_dimensions[arg_rij].height = 40
+                arg_rij += 1; arg_nr += 1
+    if arg_rij == 3:
+        ws4.merge_cells("A3:E3"); ws4["A3"] = "Geen toelichtingen ingestuurd."
+        ws4["A3"].font = Font(name="Arial", size=10, italic=True, color="888888")
+        ws4["A3"].alignment = Alignment(horizontal="center", vertical="center")
 
     buf=io.BytesIO(); wb.save(buf); buf.seek(0); return buf.getvalue()
 

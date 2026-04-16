@@ -16,7 +16,7 @@ DOCENT_WACHTWOORD = "alo"           # ← wachtwoord voor docentendashboard
 
 # Studiehandleiding PDF
 # Zet het PDF-bestand in dezelfde map als dit script en pas de naam hieronder aan.
-STUDIEHANDLEIDING_PAD  = "SHL_VLB2.pdf"      # ← bestandsnaam aanpassen
+STUDIEHANDLEIDING_PAD  = "SHL.pdf"      # ← bestandsnaam aanpassen
 STUDIEHANDLEIDING_NAAM = "Studiehandleiding cursus verantwoord leren lesgeven"   # ← weergavenaam aanpassen
 
 # ═══════════════════════════════════════════════════════════════
@@ -965,7 +965,7 @@ def wv_bedankt():
 def dash_studenten():
     st.markdown("""
     <div class="dashboard-header">
-        <h2 style="margin:0;font-family:'DM Serif Display',serif;">Dashboard - Studentenevaluatie</h2>
+        <h2 style="margin:0;font-family:'DM Serif Display',serif;">Dashboard - Studentenevaluatie | Voor docenten zelf evaluatie zie hierboven.</h2>
         <p style="margin:0.4rem 0 0;opacity:0.85;">Academie voor Lichamelijke Opvoeding - resultaten van studenten. <br>
         Graag na het downloaden van de resultaten de resultaten verwijderen zodat de volgende gerbuiker hier betrouwbare informatie uithaald.</p>
     </div>""", unsafe_allow_html=True)
@@ -1090,7 +1090,8 @@ def dash_werkveld():
     st.markdown("""
     <div class="dashboard-header">
         <h2 style="margin:0;font-family:'DM Serif Display',serif;">Dashboard - Werkveld evaluatie</h2>
-        <p style="margin:0.3rem 0 0;opacity:0.8;">Overzicht van alle ingestuurde werkveld evaluaties</p>
+        <p style="margin:0.3rem 0 0;opacity:0.8;">Overzicht van alle ingestuurde werkveld evaluaties. <br> 
+        Graag na het downloaden van de resultaten de resultaten verwijderen zodat de volgende gerbuiker hier betrouwbare informatie uithaald.</p>
     </div>""", unsafe_allow_html=True)
     resultaten = laad(TABEL_WV)
     if not resultaten:
@@ -1275,7 +1276,8 @@ def dash_docent_evaluatie():
     st.markdown("""
     <div class="dashboard-header">
         <h2 style="margin:0;font-family:'DM Serif Display',serif;">Dashboard - Docent Zelfevaluatie</h2>
-        <p style="margin:0.4rem 0 0;opacity:0.85;">Overzicht van alle ingediende docent zelfevaluaties</p>
+        <p style="margin:0.4rem 0 0;opacity:0.85;">Overzicht van alle ingediende docent zelfevaluaties. <br> 
+        Graag na het downloaden van de resultaten de resultaten verwijderen zodat de volgende gerbuiker hier betrouwbare informatie uithaald.</p>
     </div>""", unsafe_allow_html=True)
 
     resultaten = laad(TABEL_DC)

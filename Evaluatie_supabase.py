@@ -241,7 +241,7 @@ RUBRIC_DC = {
     ("6 - Toetsing & Evaluatie", 4): "Zimmerman: Student krijgt naast oordeel ook concrete feed forward.",
 }
 
-SCORE_LABELS_DC = {1: "Niet naar wens aanwezig", 2: "Voor verbetering vatbaar", 3: "Naar wens aanwezig"}
+SCORE_LABELS_DC = {1: "Niet aanwezig", 2: "Beperkt aanwezig", 3: "Naar wens aanwezig"}
 SCORE_NVT = "NVT"
 SCORE_KLEUREN_DC = {1: "#e74c3c", 2: "#f1c40f", 3: "#2ecc71"}
 
@@ -267,8 +267,8 @@ def dc_kleur_tekst(gem):
 def dc_label(gem):
     """Geeft het label terug op basis van gemiddelde score (NVT uitgesloten)."""
     if gem is None: return "Geen data"
-    if gem < 1.67: return "Niet naar wens aanwezig"
-    elif gem < 2.34: return "Voor verbetering vatbaar"
+    if gem < 1.67: return "Niet aanwezig"
+    elif gem < 2.34: return "Beperkt aanwezig"
     else: return "Naar wens aanwezig"
 
 # ═══════════════════════════════════════════════════════════════
@@ -1177,7 +1177,7 @@ def docent_evaluatie_pagina():
         <h1>Docent Cursus Zelfevaluatie</h1>
         <p>Beoordeel de kwaliteit van uw eigen cursus aan de hand van onderstaande stellingen.<br>
         Elke stelling is gekoppeld aan een theoretisch kader uit de rubric.<br>
-        <em>Kies per stelling: Niet naar wens aanwezig (1), Voor verbetering vatbaar (2), Naar wens aanwezig (3) of NVT.</em></p>
+        <em>Kies per stelling: Niet aanwezig (1), Beperkt aanwezig (2), Naar wens aanwezig (3) of NVT.</em></p>
     </div>""", unsafe_allow_html=True)
     st.divider()
 
@@ -1195,7 +1195,7 @@ def docent_evaluatie_pagina():
             with col2:
                 score_optie = st.radio(
                     "Beoordeling",
-                    options=["Niet naar wens aanwezig", "Voor verbetering vatbaar", "Naar wens aanwezig", "NVT"],
+                    options=["Niet aanwezig", "Beperkt aanwezig", "Naar wens aanwezig", "NVT"],
                     index=1,
                     key=f"dc_{onderdeel}_{i}",
                     label_visibility="collapsed",
@@ -1208,8 +1208,8 @@ def docent_evaluatie_pagina():
                 label_visibility="visible",
             )
             label_to_score = {
-                "Niet naar wens aanwezig": 1,
-                "Voor verbetering vatbaar": 2,
+                "Niet aanwezig": 1,
+                "Beperkt aanwezig": 2,
                 "Naar wens aanwezig": 3,
                 "NVT": None,
             }
@@ -1374,8 +1374,8 @@ def dash_docent_evaluatie():
     ]
 
     st.markdown("""<div style="display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:0.8rem;font-size:0.8rem;">
-    <span style="background:#f8d7da;padding:3px 10px;border-radius:6px;">Rood = Niet naar wens aanwezig (&lt; 1.67)</span>
-    <span style="background:#fff9c4;padding:3px 10px;border-radius:6px;">Geel = Voor verbetering vatbaar (1.67–2.33)</span>
+    <span style="background:#f8d7da;padding:3px 10px;border-radius:6px;">Rood = Niet aanwezig (&lt; 1.67)</span>
+    <span style="background:#fff9c4;padding:3px 10px;border-radius:6px;">Geel = Beperkt aanwezig (1.67–2.33)</span>
     <span style="background:#d4edda;padding:3px 10px;border-radius:6px;">Groen = Naar wens aanwezig (&gt; 2.33)</span>
     <span style="background:#e8ecf4;padding:3px 10px;border-radius:6px;">Grijs = Geen data / NVT</span></div>""", unsafe_allow_html=True)
 
@@ -1469,7 +1469,7 @@ def excel_docent(resultaten):
         c=ws.cell(row=4,column=ci,value=h); c.font=Font(name="Arial",bold=True,size=10,color=WIT)
         c.fill=PatternFill("solid",fgColor=DB); c.alignment=Alignment(horizontal="center",vertical="center",wrap_text=True); c.border=rand
     ws.row_dimensions[4].height=28
-    KLEUR_DC = {"Naar wens aanwezig":"2ECC71","Voor verbetering vatbaar":"F1C40F","Niet naar wens aanwezig":"E74C3C","Geen data":"E8ECF4"}
+    KLEUR_DC = {"Naar wens aanwezig":"2ECC71","Beperkt aanwezig":"F1C40F","Niet aanwezig":"E74C3C","Geen data":"E8ECF4"}
     for rij,onderdeel in enumerate(VRAGEN_DC.keys(),5):
         gems=[r["sectie_gemiddeldes"].get(onderdeel) for r in resultaten if r["sectie_gemiddeldes"].get(onderdeel) is not None]
         gem=round(sum(gems)/len(gems),2) if gems else None
@@ -1547,8 +1547,8 @@ def excel_docent(resultaten):
     def cel_label(gem):
         if gem is None: return "Geen data / NVT"
         if gem >= 2.34: return "Naar wens aanwezig"
-        elif gem >= 1.67: return "Voor verbetering vatbaar"
-        else: return "Niet naar wens aanwezig"
+        elif gem >= 1.67: return "Beperkt aanwezig"
+        else: return "Niet aanwezig"
 
     # Titelrij
     ws3.merge_cells("A1:E1")
@@ -1559,7 +1559,7 @@ def excel_docent(resultaten):
     ws3.row_dimensions[1].height = 34
 
     ws3.merge_cells("A2:E2")
-    ws3["A2"] = "Groen = Naar wens aanwezig (>= 2.34)  |  Geel = Voor verbetering vatbaar (1.67–2.33)  |  Rood = Niet naar wens aanwezig (< 1.67)  |  Grijs = Geen data / NVT"
+    ws3["A2"] = "Groen = Naar wens aanwezig (>= 2.34)  |  Geel = Beperkt aanwezig (1.67–2.33)  |  Rood = Niet aanwezig (< 1.67)  |  Grijs = Geen data / NVT"
     ws3["A2"].font = Font(name="Arial", size=9, italic=True, color="444444")
     ws3["A2"].fill = PatternFill("solid", fgColor=LB)
     ws3["A2"].alignment = Alignment(horizontal="center", vertical="center")

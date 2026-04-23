@@ -296,7 +296,7 @@ SCHAAL_INFO = """<div class="schaal-info">
     <li><strong>Slecht:</strong> 2</li>
     <li><strong>Neutraal:</strong> 3</li>
     <li><strong>Goed:</strong> 4</li>
-    <li><strong>Excellent:</strong> 5</li>
+    <li><strong>Zeer goed:</strong> 5</li>
 </ul>
 <p>Deze indeling helpt om duidelijk onderscheid te maken tussen verschillende niveaus en
 te kijken waar de verbeterpunten liggen.</p>

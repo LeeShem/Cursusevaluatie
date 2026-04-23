@@ -290,16 +290,13 @@ NIVEAU_BESCHRIJVING = {
 
 SCHAAL_INFO = """<div class="schaal-info">
 <h4>Info Beoordelingsschaal</h4>
-<p>Het is belangrijk om te beseffen dat de term <strong>neutraal</strong> in deze context niet
-gelijkstaat aan een voldoende, maar wordt geinterpreteerd als een <strong>gemiddelde prestatie
-(circa een 5)</strong>. Dit betekent dat een neutrale beoordeling nog als onvoldoende wordt beschouwd.</p>
 <p><strong>De beoordelingscategorieen zijn als volgt ingedeeld:</strong></p>
 <ul>
-    <li><strong>Zeer slecht:</strong> 1 - 2,5</li>
-    <li><strong>Slecht:</strong> 2,5 - 5</li>
-    <li><strong>Neutraal:</strong> 5 (onvoldoende)</li>
-    <li><strong>Goed:</strong> 7 - 8,5</li>
-    <li><strong>Excellent:</strong> 8,5 - 10</li>
+    <li><strong>Zeer slecht:</strong> 1</li>
+    <li><strong>Slecht:</strong> 2</li>
+    <li><strong>Neutraal:</strong> 3</li>
+    <li><strong>Goed:</strong> 4</li>
+    <li><strong>Excellent:</strong> 5</li>
 </ul>
 <p>Deze indeling helpt om duidelijk onderscheid te maken tussen verschillende niveaus en
 te kijken waar de verbeterpunten liggen.</p>

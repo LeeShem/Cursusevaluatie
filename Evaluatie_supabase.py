@@ -300,6 +300,10 @@ SCHAAL_INFO = """<div class="schaal-info">
 </ul>
 <p>Deze indeling helpt om duidelijk onderscheid te maken tussen verschillende niveaus en
 te kijken waar de verbeterpunten liggen.</p>
+
+<p><strong>De doelstelling:</strong></p> <br>
+<p>Aan de hand van deze vragenlijst hopen wij informatie binnen te krijgen vanuit jullie (de studenten) om de cursus te verbetren voor de volgende generatie.<p>
+
 </div>"""
 
 # ═══════════════════════════════════════════════════════════════
@@ -1719,7 +1723,7 @@ def main():
         ("rol", None), ("docent_ingelogd", False),
         ("wv_email", None), ("wv_sh_gezien", False),
         ("wv_ingediend", False), ("wv_resultaat", {}),
-        ("st_ingediend", False), ("st_resultaat", {}),
+        ("st_ingediend", False), ("st_resultaat",
         ("dc_ingediend", False), ("dc_resultaat", {}),
         ("docent_keuze", "Resultaten inzien"),
     ]

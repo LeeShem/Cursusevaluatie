@@ -767,7 +767,7 @@ def student_pagina():
     st.markdown("""
     <div style="background:#f0f9ff;border:2px solid #7dd3fc;border-radius:12px;
                 padding:1.2rem 1.6rem;margin-bottom:1.2rem;">
-        <h4 style="color:#0c4a6e;margin:0 0 0.5rem;font-size:1rem;">🎯 Doelstelling van deze vragenlijst</h4>
+        <h4 style="color:#0c4a6e;margin:0 0 0.5rem;font-size:1rem;"> Doelstelling van deze vragenlijst</h4>
         <p style="color:#0c4a6e;font-size:0.88rem;margin:0;line-height:1.6;">
             Deze evaluatie heeft als doel waardevolle inzichten te verzamelen vanuit jouw
             ervaringen als student. Jouw eerlijke feedback helpt ons de cursus inhoudelijk,

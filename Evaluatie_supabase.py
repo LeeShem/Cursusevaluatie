@@ -764,6 +764,17 @@ def student_pagina():
         Vul niet het gewenste juiste antwoord in; dit leidt tot minder accurate resultaten.<br>
         <em>Er wordt gebruik gemaakt van de Likert-schaal (voor hulp klik op de (?) naast de vraag).</em></p>
     </div>""", unsafe_allow_html=True)
+    st.markdown("""
+    <div style="background:#f0f9ff;border:2px solid #7dd3fc;border-radius:12px;
+                padding:1.2rem 1.6rem;margin-bottom:1.2rem;">
+        <h4 style="color:#0c4a6e;margin:0 0 0.5rem;font-size:1rem;">🎯 Doelstelling van deze vragenlijst</h4>
+        <p style="color:#0c4a6e;font-size:0.88rem;margin:0;line-height:1.6;">
+            Deze evaluatie heeft als doel waardevolle inzichten te verzamelen vanuit jouw
+            ervaringen als student. Jouw eerlijke feedback helpt ons de cursus inhoudelijk,
+            didactisch en organisatorisch te verbeteren — zodat toekomstige studenten kunnen
+            profiteren van een nog sterkere cursus. Jouw mening doet er dus écht toe.
+        </p>
+    </div>""", unsafe_allow_html=True)
     st.markdown(SCHAAL_INFO, unsafe_allow_html=True)
     st.divider()
     alle_scores = {}

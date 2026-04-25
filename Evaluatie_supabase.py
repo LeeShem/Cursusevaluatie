@@ -1724,7 +1724,7 @@ def main():
         ("rol", None), ("docent_ingelogd", False),
         ("wv_email", None), ("wv_sh_gezien", False),
         ("wv_ingediend", False), ("wv_resultaat", {}),
-        ("st_ingediend", False), ("st_resultaat",
+        ("st_ingediend", False), ("st_resultaat"),
         ("dc_ingediend", False), ("dc_resultaat", {}),
         ("docent_keuze", "Resultaten inzien"),
     ]

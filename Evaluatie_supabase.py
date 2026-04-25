@@ -301,8 +301,9 @@ SCHAAL_INFO = """<div class="schaal-info">
 <p>Deze indeling helpt om duidelijk onderscheid te maken tussen verschillende niveaus en
 te kijken waar de verbeterpunten liggen.</p>
 
-<p><strong>De doelstelling:</strong></p> <br>
-<p>Aan de hand van deze vragenlijst hopen wij informatie binnen te krijgen vanuit jullie (de studenten) om de cursus te verbetren voor de volgende generatie.<p>
+<p><strong>De doelstelling:</strong> <br>
+Aan de hand van deze vragenlijst hopen wij informatie binnen te krijgen vanuit jullie (de studenten) om de cursus te verbetren voor de volgende generatie.</p>
+
 
 </div>"""
 

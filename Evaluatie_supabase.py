@@ -237,7 +237,7 @@ RUBRIC_DC = {
     ("5 - Beroepspraktijk", 4): "Zimmerman: De instructie dwingt de student om voorafgaand aan de praktijk een persoonlijk focuspunt of keuze-leerdoel vast te stellen, zodat de student met een gerichte intentie de uitvoering start.\n\nZimmerman: Portfolio bevat tussentijdse en afrondende reflectie.",
     ("6 - Toetsing & Evaluatie", 1): "Biggs: Formatieve oefentoets komt overeen met summatief eindtentamen.\n\nBloom: Toetsmatrijs toont balans reproductie en hogere-orde vragen.",
     ("6 - Toetsing & Evaluatie", 2): "Context-Concept: Toetsvragen maken gebruik van praktijkcasussen.\n\nEntwistle: Het scoringsmodel of de rubric beloont expliciet het aantonen van diepgaand begrip en het leggen van eigen verbanden (Deep Learning), en niet slechts exact reproductiewerk (Surface).",
-    ("6 - Toetsing & Evaluatie", 3): "Miller: Toetsvorm valide voor leerdoel (Shows how bij handelingscompetenties).\n\nMiller: Het probleem of de casus die in de toets centraal staat, is een authentieke, waarheidsgetrouwe weergave van een probleem uit de actuele ALO-beroepspraktijk.",
+    ("6 - Toetsing & Evaluatie", 3): "Miller: Toetsvorm valide voor leerdoel (Shows how bij handelingscompetenties).\n\nMiller: Het probleem of de casus uit de actuele ALO-beroepspraktijk.",
     ("6 - Toetsing & Evaluatie", 4): "Zimmerman: Student krijgt naast oordeel ook concrete feed forward.",
 }
 

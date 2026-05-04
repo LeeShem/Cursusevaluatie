@@ -155,7 +155,7 @@ VRAGEN_DC = {
         ("De docent stelt tijdens de instructie minimaal één gerichte denkvraag (geen reproductie) aan de groep.", 1, "Bloom"),
         ("De les start expliciet met een prikkelende 'hook' om de aandacht te vangen, het benoemen van het leerdoel, en dwingt de student direct om relevante voorkennis of ervaringen te activeren.", 2, "Gagné"),
         ("De theorie-uitleg begint met een herkenbaar praktijkprobleem. (i.p.v. droge definities).", 2, "Context-Concept"),
-        ("Complexe theorie wordt op de slides in visueel toegankelijke stappen (chunks) aangeboden.", 2, "Scaffolding"),
+        ("Complexe theorie wordt op de slides in visueel behapbare stappen (chunks) aangeboden.", 2, "Scaffolding"),
         ("De docent benoemt expliciet de relevantie van de theorie voor de latere rol als LO-docent.", 3, "Shulman PCK"),
         ("De docent benoemt tijdens de uitleg expliciet het onderscheid tussen de hoofdzaken (de kern) en de bijzaken.", 4, "Zimmerman"),
         ("De inzet van media is doelbewust: het ondersteunt de theorie óf dient als bewuste brain break, maar leidt niet af tijdens complexe uitleg.", 4, "TPACK"),
@@ -224,7 +224,7 @@ RUBRIC_DC = {
     ("2 - Verwerking", 3): "Miller: Opdracht dwingt theorie uit te voeren of simuleren (Shows How).\n\nKolb: Theorie actief koppelen aan nieuwe situatie (transfer).",
     ("2 - Verwerking", 4): "Zimmerman: Ruimte voor eigen inbreng en autonomie.\n\nZimmerman: Moment ingericht voor zelfregulatie (peer-feedback of reflectie).",
     ("3 - Zelfstudie & Literatuur", 1): "Dublin: Teksten sluiten aan bij HBO ALO-denkniveau.\n\nBiggs: De totale hoeveelheid te bestuderen stof is realistisch in verhouding tot de formele studiebelastingsuren.",
-    ("3 - Zelfstudie & Literatuur", 2): "Scaffolding: Literatuur voorzien van leesinstructie of focuspunten.\n\nGagné: In de opdracht tot zelfstudie zit een vraagstuk of contextbeschrijving die de student dwingt om eerst zijn/haar voorkennis op te halen voordat het lezen begint.\n\nEntwistle: Beschrijving waarom literatuur relevant is.",
+    ("3 - Zelfstudie & Literatuur", 2): "Scaffolding: Literatuur voorzien van leesinstructie of specifieke leesvragen.\n\nGagné: In de opdracht tot zelfstudie zit een vraagstuk of contextbeschrijving die de student dwingt om eerst zijn/haar voorkennis op te halen voordat het lezen begint.\n\nEntwistle: Beschrijving waarom literatuur relevant is.",
     ("3 - Zelfstudie & Literatuur", 3): "Shulman PCK: De literatuur is geschreven voor (of logisch te vertalen naar) de ALO-context, en is geen algemene psychologie of theorie zonder link naar de praktijk.\n\nKolb: De leesopdracht vraagt de student expliciet om tijdens het lezen de theorie (concepten) te koppelen aan een eigen praktijkervaring..",
     ("3 - Zelfstudie & Literatuur", 4): "TPACK: Materiaal in bruikbaar digitaal formaat beschikbaar.\n\nZimmerman: Helder overzicht wanneer welke stof bestudeerd moet zijn.",
     ("4 - Digitale Tools & Oefenmateriaal", 1): "Biggs: Het denkniveau van de oefenvragen/opdrachten bereidt de student direct voor op de mate van complexiteit van het tentamen.\n\nBloom: Tool vraagt actief naar inzicht, niet alleen feitenkennis.",
@@ -237,7 +237,7 @@ RUBRIC_DC = {
     ("5 - Beroepspraktijk", 4): "Zimmerman: De instructie dwingt de student om voorafgaand aan de praktijk een persoonlijk focuspunt of keuze-leerdoel vast te stellen, zodat de student met een gerichte intentie de uitvoering start.\n\nZimmerman: Portfolio bevat tussentijdse en afrondende reflectie.",
     ("6 - Toetsing & Evaluatie", 1): "Biggs: Formatieve oefentoets komt overeen met summatief eindtentamen.\n\nBloom: Toetsmatrijs toont balans reproductie en hogere-orde vragen.",
     ("6 - Toetsing & Evaluatie", 2): "Context-Concept: Toetsvragen maken gebruik van praktijkcasussen.\n\nEntwistle: Het scoringsmodel of de rubric beloont expliciet het aantonen van diepgaand begrip en het leggen van eigen verbanden (Deep Learning), en niet slechts exact reproductiewerk (Surface).",
-    ("6 - Toetsing & Evaluatie", 3): "Miller: Toetsvorm valide voor leerdoel (Shows how bij handelingscompetenties).\n\nMiller: Casus is authentieke weergave van ALO-beroepspraktijk.",
+    ("6 - Toetsing & Evaluatie", 3): "Miller: Toetsvorm valide voor leerdoel (Shows how bij handelingscompetenties).\n\nMiller: Het probleem of de casus die in de toets centraal staat, is een authentieke, waarheidsgetrouwe weergave van een probleem uit de actuele ALO-beroepspraktijk.",
     ("6 - Toetsing & Evaluatie", 4): "Zimmerman: Student krijgt naast oordeel ook concrete feed forward.",
 }
 

@@ -155,7 +155,7 @@ VRAGEN_DC = {
         ("De docent stelt tijdens de instructie minimaal één gerichte denkvraag (geen reproductie) aan de groep.", 1, "Bloom"),
         ("De les start expliciet met een prikkelende 'hook' om de aandacht te vangen, het benoemen van het leerdoel, en dwingt de student direct om relevante voorkennis of ervaringen te activeren.", 2, "Gagné"),
         ("De theorie-uitleg begint met een herkenbaar praktijkprobleem. (i.p.v. droge definities).", 2, "Context-Concept"),
-        ("Complexe theorie wordt op de slides in visueel behapbare stappen (chunks) aangeboden.", 2, "Scaffolding"),
+        ("Complexe theorie wordt op de slides in visueel toegankelijke stappen (chunks) aangeboden.", 2, "Scaffolding"),
         ("De docent benoemt expliciet de relevantie van de theorie voor de latere rol als LO-docent.", 3, "Shulman PCK"),
         ("De docent benoemt tijdens de uitleg expliciet het onderscheid tussen de hoofdzaken (de kern) en de bijzaken.", 4, "Zimmerman"),
         ("De inzet van media is doelbewust: het ondersteunt de theorie óf dient als bewuste brain break, maar leidt niet af tijdens complexe uitleg.", 4, "TPACK"),
@@ -198,7 +198,7 @@ VRAGEN_DC = {
         ("De stage-instructie bevat concrete focuspunten, kaders of een kijkwijzer, zodat het voor de student helder is op welke hoofdzaken gelet moet worden.", 2, "Scaffolding"),
         ("De leerroute is inductief: de opdracht start met een authentiek praktijkscenario (observatie, casus of simulatie) dat een duidelijke leervraag oproept; de theorie (het concept) wordt pas aangereikt wanneer de relevantie voor de praktijk is aangetoond.", 2, "Context-Concept"),
         ("De opdracht borgt in de stappen dat de volledige leercyclus wordt doorlopen: ervaring opdoen, reflecteren, theorie koppelen, en een nieuw plan maken.", 3, "Kolb"),
-        ("Er is een verplicht, aantoonbaar moment waarop de student de theorie bespreekt met de werkplekbegeleider.", 3, "Kolb"),
+        ("Er is een verplicht, aantoonbaar moment waarop de student de theorie bespreekt met de werkplekbegeleider.", 3, "Kolb (2)"),
         ("De instructie dwingt de student om voorafgaand aan de praktijk een persoonlijk focuspunt of keuze-leerdoel vast te stellen, zodat de student met een gerichte intentie de uitvoering start.", 4, "Zimmerman"),
         ("Het stage-portfolio of de opdracht bevat een verplicht onderdeel voor zowel tussentijdse als afrondende reflectie op het eigen leerproces.", 4, "Zimmerman"),
     ],
@@ -208,7 +208,7 @@ VRAGEN_DC = {
         ("De toetsvragen (ook schriftelijk) maken structureel gebruik van uitgewerkte praktijkcasussen, in plaats van enkel te vragen naar droge theoretische definities.", 2, "Context-Concept"),
         ("Het scoringsmodel of de rubric beloont expliciet het aantonen van diepgaand begrip en het leggen van eigen verbanden (Deep Learning), en niet slechts exact reproductiewerk (Surface).", 2, "Entwistle"),
         ("De gekozen toetsvorm is valide voor het leerdoel: handelingscompetenties (zoals lesgeven) worden getoetst via een praktijkassessment (Shows how), niet via een kennistoets.", 3, "Miller"),
-        ("Het probleem of de casus die in de toets centraal staat, is een authentieke, waarheidsgetrouwe weergave van een probleem uit de actuele ALO-beroepspraktijk.", 3, "Miller"),
+        ("Het probleem of de casus die in de toets centraal staat, is een authentieke, waarheidsgetrouwe weergave van een probleem uit de actuele ALO-beroepspraktijk.", 3, "Miller (2)"),
         ("Bij formatieve evaluaties krijgt de student naast een oordeel ook concrete feed forward (handelingsperspectief), zodat duidelijk is wat er moet gebeuren om beter te worden.", 4, "Zimmerman"),
     ],
 }
@@ -224,7 +224,7 @@ RUBRIC_DC = {
     ("2 - Verwerking", 3): "Miller: Opdracht dwingt theorie uit te voeren of simuleren (Shows How).\n\nKolb: Theorie actief koppelen aan nieuwe situatie (transfer).",
     ("2 - Verwerking", 4): "Zimmerman: Ruimte voor eigen inbreng en autonomie.\n\nZimmerman: Moment ingericht voor zelfregulatie (peer-feedback of reflectie).",
     ("3 - Zelfstudie & Literatuur", 1): "Dublin: Teksten sluiten aan bij HBO ALO-denkniveau.\n\nBiggs: De totale hoeveelheid te bestuderen stof is realistisch in verhouding tot de formele studiebelastingsuren.",
-    ("3 - Zelfstudie & Literatuur", 2): "Scaffolding: Literatuur voorzien van leesinstructie of specifieke leesvragen.\n\nGagné: In de opdracht tot zelfstudie zit een vraagstuk of contextbeschrijving die de student dwingt om eerst zijn/haar voorkennis op te halen voordat het lezen begint.\n\nEntwistle: Beschrijving waarom literatuur relevant is.",
+    ("3 - Zelfstudie & Literatuur", 2): "Scaffolding: Literatuur voorzien van leesinstructie of focuspunten.\n\nGagné: In de opdracht tot zelfstudie zit een vraagstuk of contextbeschrijving die de student dwingt om eerst zijn/haar voorkennis op te halen voordat het lezen begint.\n\nEntwistle: Beschrijving waarom literatuur relevant is.",
     ("3 - Zelfstudie & Literatuur", 3): "Shulman PCK: De literatuur is geschreven voor (of logisch te vertalen naar) de ALO-context, en is geen algemene psychologie of theorie zonder link naar de praktijk.\n\nKolb: De leesopdracht vraagt de student expliciet om tijdens het lezen de theorie (concepten) te koppelen aan een eigen praktijkervaring..",
     ("3 - Zelfstudie & Literatuur", 4): "TPACK: Materiaal in bruikbaar digitaal formaat beschikbaar.\n\nZimmerman: Helder overzicht wanneer welke stof bestudeerd moet zijn.",
     ("4 - Digitale Tools & Oefenmateriaal", 1): "Biggs: Het denkniveau van de oefenvragen/opdrachten bereidt de student direct voor op de mate van complexiteit van het tentamen.\n\nBloom: Tool vraagt actief naar inzicht, niet alleen feitenkennis.",
@@ -237,7 +237,7 @@ RUBRIC_DC = {
     ("5 - Beroepspraktijk", 4): "Zimmerman: De instructie dwingt de student om voorafgaand aan de praktijk een persoonlijk focuspunt of keuze-leerdoel vast te stellen, zodat de student met een gerichte intentie de uitvoering start.\n\nZimmerman: Portfolio bevat tussentijdse en afrondende reflectie.",
     ("6 - Toetsing & Evaluatie", 1): "Biggs: Formatieve oefentoets komt overeen met summatief eindtentamen.\n\nBloom: Toetsmatrijs toont balans reproductie en hogere-orde vragen.",
     ("6 - Toetsing & Evaluatie", 2): "Context-Concept: Toetsvragen maken gebruik van praktijkcasussen.\n\nEntwistle: Het scoringsmodel of de rubric beloont expliciet het aantonen van diepgaand begrip en het leggen van eigen verbanden (Deep Learning), en niet slechts exact reproductiewerk (Surface).",
-    ("6 - Toetsing & Evaluatie", 3): "Miller: Toetsvorm valide voor leerdoel (Shows how bij handelingscompetenties).\n\nMiller: Het probleem of de casus uit de actuele ALO-beroepspraktijk.",
+    ("6 - Toetsing & Evaluatie", 3): "Miller: Toetsvorm valide voor leerdoel (Shows how bij handelingscompetenties).\n\nMiller: Casus is authentieke weergave van ALO-beroepspraktijk.",
     ("6 - Toetsing & Evaluatie", 4): "Zimmerman: Student krijgt naast oordeel ook concrete feed forward.",
 }
 
@@ -767,7 +767,7 @@ def student_pagina():
     st.markdown("""
     <div style="background:#f0f9ff;border:2px solid #7dd3fc;border-radius:12px;
                 padding:1.2rem 1.6rem;margin-bottom:1.2rem;">
-        <h4 style="color:#0c4a6e;margin:0 0 0.5rem;font-size:1rem;"> Doelstelling van deze vragenlijst</h4>
+        <h4 style="color:#0c4a6e;margin:0 0 0.5rem;font-size:1rem;">🎯 Doelstelling van deze vragenlijst</h4>
         <p style="color:#0c4a6e;font-size:0.88rem;margin:0;line-height:1.6;">
             Deze evaluatie heeft als doel waardevolle inzichten te verzamelen vanuit jouw
             ervaringen als student. Jouw eerlijke feedback helpt ons de cursus inhoudelijk,
@@ -1335,7 +1335,7 @@ def dash_docent_evaluatie():
                 gv_str = f"{gv:.2f}" if gv is not None else "–"
                 label_v = dc_label(gv)
                 nvt_str = f" ({nvt_count}× NVT)" if nvt_count > 0 else ""
-                rows.append({"Nr.": vi, "Stelling": stelling, "Lens": lens, "Theorie": theorie, "Gemiddelde": gv_str + nvt_str, "Oordeel": label_v})
+                rows.append({"Nr.": vi, "Stelling": stelling, "Lens": lens, "Theorie": theorie.replace(" (2)", ""), "Gemiddelde": gv_str + nvt_str, "Oordeel": label_v})
             st.dataframe(pd.DataFrame(rows), use_container_width=True, hide_index=True)
 
             # Toon argumentaties per stelling
@@ -1426,9 +1426,11 @@ def dash_docent_evaluatie():
                             stelling_tekst = st_tekst
                             break
 
+                    # Strip " (2)" voor weergave zodat het er netjes uitziet
+                    theorie_label = theorie.replace(" (2)", "")
                     cel_inhoud += f"""<div style="background:{achter};border-radius:6px;padding:7px 9px;margin-bottom:6px;">
                         <div style="font-weight:700;font-size:0.78rem;color:{tekst_kleur};margin-bottom:3px;">
-                            {theorie} — {label_str} ({gem_str})
+                            {theorie_label} — {label_str} ({gem_str})
                         </div>
                         <div style="font-size:0.75rem;color:#333;line-height:1.4;">{stelling_tekst}</div>
                     </div>"""
@@ -1513,7 +1515,7 @@ def excel_docent(resultaten):
             gv_str=f"{gv:.2f}" if gv is not None else "–"
             kleur_cel=dc_kleur_hex(gv)
             kfv=PatternFill("solid",fgColor=kleur_cel)
-            for ci,val in enumerate([vi,stelling,lens,theorie,gv_str,nvt_cnt if nvt_cnt>0 else ""],1):
+            for ci,val in enumerate([vi,stelling,lens,theorie.replace(" (2)",""),gv_str,nvt_cnt if nvt_cnt>0 else ""],1):
                 c=ws2.cell(row=rij,column=ci,value=val); c.font=Font(name="Arial",size=9)
                 c.alignment=Alignment(horizontal="center" if ci!=2 else "left",vertical="center",wrap_text=(ci==2)); c.border=rand
                 if ci==5: c.fill=kfv
@@ -1622,7 +1624,8 @@ def excel_docent(resultaten):
                     gem = theorie_gems.get((onderdeel, theorie))
                     label = cel_label(gem)
                     gem_str = f"{gem:.2f}" if gem is not None else "–"
-                    cel_tekst += f"{theorie} - {label} ({gem_str})\n{stelling_tekst}\n\n"
+                    theorie_label = theorie.replace(" (2)", "")
+                    cel_tekst += f"{theorie_label} - {label} ({gem_str})\n{stelling_tekst}\n\n"
 
                 c = ws3.cell(row=ri, column=lens + 1, value=cel_tekst.strip())
                 c.font = Font(name="Arial", size=8)
